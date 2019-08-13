@@ -14,6 +14,16 @@ setup(
     packages=find_packages(exclude=('tests',)),
     include_package_data=True,
     install_requires=[
+        # GitHub Fetcher
+        'requests',
+        'scrapehelper @ https://github.com/sio/scrapehelper/tarball/master',
+
+        # Generic Reader
+        'attrs',
+
+        # Pelican Renderer
+        'pelican',
+        'markdown',
     ],
     python_requires='>=3.3',
     zip_safe=True,
