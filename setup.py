@@ -16,7 +16,6 @@ setup(
     install_requires=[
         # GitHub Fetcher
         'requests',
-        'scrapehelper @ https://github.com/sio/scrapehelper/tarball/master',
 
         # Generic Reader
         'attrs',

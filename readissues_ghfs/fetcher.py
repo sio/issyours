@@ -5,8 +5,10 @@ Create a backup of GitHub issues in JSON files on local filesystem
 
 import json
 import logging
+import threading
+import time
 
-from scrapehelper.fetch import FetcherMeta
+import requests
 
 
 
@@ -19,49 +21,73 @@ class GitHubRateLimitError(RuntimeError):
 
 
 
-class GitHubAPICaller(metaclass=FetcherMeta):
+class GitHubAPIError(RuntimeError):
+    '''Raise when some other unrecoverable API error occurs'''
+
+
+
+class GitHubRateLimit:
+    '''Simple rate limiter for GitHub'''
+
+    def __init__(self):
+        self.lock = threading.RLock()
+        self.clock = time.time
+        self.reset_time = None
+        self.remaining = None
+
+
+    def sleep(self):
+        with self.lock:
+            if self.remaining is not None and not self.remaining:
+                log.debug('Sleeping until rate limit is reset')
+                time.sleep(max(self.reset_time - self.clock(), 0))
+
+
+    def update(self, response):
+        with self.lock:
+            self.reset_time = int(response.headers['X-RateLimit-Reset'])
+            self.remaining = int(response.headers['X-RateLimit-Remaining'])
+
+
+
+class GitHubAPICaller:
     '''
     Simplistic GitHub REST API (v3) Client
     '''
 
-    root = 'https://api.github.com'
-
+    API_ROOT = 'https://api.github.com'
     USER_AGENT = 'Issue backup fetcher v0.0.1 <https://github.com/sio/readissues/>'
-    RATELIMIT_CALLS = 5000
-    RATELIMIT_INTERVAL = 60*60  # 1 hour
-    TIMEOUT = 5
 
 
     def __init__(self, token):
-        self._requests.headers.update({
+        self.rate_limit = GitHubRateLimit()
+
+        session = requests.Session()
+        session.headers.update({
             'Accept': ('application/vnd.github.v3+json,'
                        'application/vnd.github.squirrel-girl-preview+json'),
             'Authorization': 'token {}'.format(token),
+            'User-Agent': self.USER_AGENT,
         })
+        session.timeout = 5
+        self._requests = session
 
 
     def get(self, url, *a, **ka):
         '''Execute GET request to a given URL'''
-        with self.rate_limit:
-            response = self._requests.get(url, *a, **ka)
+        self.rate_limit.sleep()
+        response = self._requests.get(url, *a, **ka)
+        self.rate_limit.update(response)
         self._check(response)
         return response
 
 
+    def api(self, *kw):
+        pass
+
+
     def _check(self, response):
         '''Check response for common error conditions'''
-        api_remaining = response.headers.get('X-RateLimit-Remaining')
-        if api_remaining:
-            api_remaining = int(api_remaining)
-            if self.rate_limit.remaining > api_remaining:
-                log.debug(
-                    'Adjusting %s rate limit from %s to %s',
-                    self.__class__.__name__,
-                    self.rate_limit.remaining,
-                    api_remaining
-                )
-                self.rate_limit.remaining = api_remaining
-
         if response.status_code == 200:
             return
 
@@ -69,13 +95,16 @@ class GitHubAPICaller(metaclass=FetcherMeta):
         and response.headers['X-RateLimit-Remaining'] == '0':
             raise GitHubRateLimitError(readable(response))
 
+        if response.status_code == 401:
+            raise GitHubAPIError(response.json().get('message', 'Unknown API error'))
 
 
-def readable(response):
+
+def readable(response, payload=True):
     '''Make response readable'''
     overview = dict(
         status = response.status_code,
         headers = dict(response.headers),
-        payload = response.json(),
+        payload = response.json() if payload else '<...>',
     )
     return json.dumps(overview, indent=2, sort_keys=True)
