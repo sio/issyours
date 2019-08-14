@@ -242,6 +242,9 @@ class GitHubTimestamp:
             if isinstance(dtime, datetime):
                 self.datetime = dtime
                 return
+            elif isinstance(dtime, type(self)):
+                self.datetime = dtime.datetime
+                return
             else:
                 raise TypeError('expected datetime object, got {}'.format(dtime.__class__.__name__))
         if header:
