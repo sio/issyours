@@ -81,6 +81,7 @@ class GitHubAPICaller:
         session = requests.Session()
         session.headers.update({
             'Accept': ('application/vnd.github.v3+json,'
+                       'application/vnd.github.symmetra-preview+json,'
                        'application/vnd.github.squirrel-girl-preview+json'),
             'Authorization': 'token {}'.format(token),
             'User-Agent': self.USER_AGENT,
@@ -146,6 +147,48 @@ class GitHubAPICaller:
         if since:
             headers['If-Modified-Since'] = GitHubTimestamp(since).header
         return headers
+
+
+
+class GitHubAPI:
+    '''
+    High level read only GitHub REST API (v3) client
+    '''
+
+    def __init__(self, token):
+        self.api = GitHubAPICaller(token)
+
+
+    def issues(self, owner, repo, since=None):
+        endpoint = 'repos/{owner}/{repo}/issues'.format(owner=owner, repo=repo)
+        params = {
+            'filter': 'all',
+            'state': 'all',
+            'per_page': 100,
+        }
+        if since:
+            params['since'] = GitHubTimestamp(since).isotime
+
+        for response in self.api.pages(endpoint, params=params):
+            for issue in response.json():
+                url = issue['url']
+                try:
+                    yield self.api.single(url=url, since=since)
+                except GitHubNotModifiedException:
+                    pass
+
+
+    def issue(self, owner, repo, issue_no, since=None):
+        endpoint = 'repos/{owner}/{repo}/issues/{number}'.format(
+            owner=owner,
+            repo=repo,
+            number=issue_no,
+        )
+        return self.api.single(endpoint, since=since)
+
+
+    def comments(self, owner, repo, issue_no, since=None):
+        pass
 
 
 
