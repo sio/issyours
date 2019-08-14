@@ -187,8 +187,23 @@ class GitHubAPI:
         return self.api.single(endpoint, since=since).json()
 
 
-    def comments(self, owner, repo, issue_no, since=None):
-        pass
+    def comments(self, owner=None, repo=None, issue_no=None, since=None, url=None):
+        kwargs = {}
+        if not url:
+            kwargs['endpoint'] = 'repos/{owner}/{repo}/issues/{number}/comments'.format(
+                owner=owner,
+                repo=repo,
+                number=issue_no
+            )
+        else:
+            kwargs['url'] = url
+        kwargs['params'] = {'per_page': 100}
+        if since:
+            kwargs['params']['since'] = GitHubTimestamp(since).isotime
+
+        for response in self.api.pages(**kwargs):
+            for comment in response.json():
+                yield comment
 
 
 
