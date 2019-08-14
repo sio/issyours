@@ -67,7 +67,7 @@ class GitHubRateLimit:
 
 class GitHubAPICaller:
     '''
-    Simplistic GitHub REST API (v3) Client
+    Low level read only GitHub REST API (v3) client
     '''
 
     API_ROOT = 'https://api.github.com'
@@ -131,6 +131,8 @@ class GitHubAPICaller:
 
         if response.status_code == 401:
             raise GitHubAPIError(response.json().get('message', 'Unknown API error'))
+
+        response.raise_for_status()  # Any errors not handled above
 
 
     def _headers(self, since=None):
