@@ -7,6 +7,7 @@ import json
 import logging
 import threading
 import time
+from urllib.parse import urljoin
 
 import requests
 
@@ -68,7 +69,7 @@ class GitHubAPICaller:
 
 
     def __init__(self, token):
-        self.rate_limit = GitHubRateLimit()
+        self._rate_limit = GitHubRateLimit()
 
         session = requests.Session()
         session.headers.update({
@@ -81,17 +82,32 @@ class GitHubAPICaller:
         self._requests = session
 
 
-    def get(self, url, *a, **ka):
+    def single(self, endpoint, params=None):
+        '''Fetch a single API response'''
+        return self._call(endpoint, params).json()
+
+
+    def pages(self, endpoint, params=None):
+        '''Iterate over paginated API responses'''
+        response = self._call(endpoint, params)
+        yield response.json()
+        while 'next' in response.links:
+            response = self._get(response.links['next']['url'])
+            yield response.json()
+
+
+    def _get(self, url, *a, **ka):
         '''Execute GET request to a given URL'''
-        self.rate_limit.sleep()
+        self._rate_limit.sleep()
         response = self._requests.get(url, *a, **ka)
-        self.rate_limit.update(response)
+        self._rate_limit.update(response)
         self._check(response)
         return response
 
 
-    def api(self, *kw):
-        pass
+    def _call(self, endpoint, params=None):
+        '''Make a single API call'''
+        return self._get(urljoin(self.API_ROOT, endpoint), params=params)
 
 
     def _check(self, response):
