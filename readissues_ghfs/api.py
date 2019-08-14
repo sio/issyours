@@ -207,6 +207,25 @@ class GitHubAPI:
                 yield comment
 
 
+    def events(self, owner=None, repo=None, issue_no=None, since=None, url=None):
+        kwargs = {}
+        if not url:
+            kwargs['endpoint'] = 'repos/{owner}/{repo}/issues/{number}/events'.format(
+                owner=owner,
+                repo=repo,
+                number=issue_no
+            )
+        else:
+            kwargs['url'] = url
+        kwargs['params'] = {'per_page': 100}
+        if since:
+            kwargs['params']['since'] = GitHubTimestamp(since).isotime
+
+        for response in self.api.pages(**kwargs):
+            for event in response.json():
+                yield event
+
+
 
 class GitHubTimestamp:
     '''
