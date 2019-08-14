@@ -36,6 +36,14 @@ class GitHubRateLimit:
         self.remaining = None
 
 
+    def __repr__(self):
+        return '<{}: remaining={}, reset_time={}>'.format(
+            self.__class__.__name__,
+            self.remaining,
+            self.reset_time,
+        )
+
+
     def sleep(self):
         with self.lock:
             if self.remaining is not None and not self.remaining:
