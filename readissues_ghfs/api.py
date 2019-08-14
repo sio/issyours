@@ -179,6 +179,7 @@ class GitHubAPI:
 
 
     def issue(self, owner, repo, issue_no, since=None):
+        raise RuntimeError  # TODO: is this method needed by anyone?
         endpoint = 'repos/{owner}/{repo}/issues/{number}'.format(
             owner=owner,
             repo=repo,
