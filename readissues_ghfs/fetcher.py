@@ -97,10 +97,10 @@ class GitHubAPICaller:
         '''Iterate over paginated API responses'''
         headers = self._headers(since=since)
         response = self._call(endpoint, params, headers)
-        yield response.json()
+        yield response
         while 'next' in response.links:
             response = self._get(response.links['next']['url'], headers=headers)
-            yield response.json()
+            yield response
 
 
     def _get(self, url, *a, **ka):
