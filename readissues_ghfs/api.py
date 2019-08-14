@@ -89,18 +89,18 @@ class GitHubAPICaller:
         self._requests = session
 
 
-    def single(self, endpoint, params=None, since=None):
+    def single(self, endpoint=None, params=None, since=None, url=None):
         '''Fetch a single API response'''
-        return next(self.pages(endpoint, params, since))
+        return next(self.pages(endpoint, params, since, url))
 
 
-    def pages(self, endpoint, params=None, since=None):
+    def pages(self, endpoint=None, params=None, since=None, url=None):
         '''Iterate over paginated API responses'''
         headers = self._headers(since=since)
-        response = self._call(endpoint, params, headers)
+        response = self._call(endpoint, params, headers, url)
         yield response
         while 'next' in response.links:
-            response = self._get(response.links['next']['url'], headers=headers)
+            response = self._call(url=response.links['next']['url'], headers=headers)
             yield response
 
 
@@ -113,9 +113,13 @@ class GitHubAPICaller:
         return response
 
 
-    def _call(self, endpoint, params=None, headers=None):
+    def _call(self, endpoint=None, params=None, headers=None, url=None):
         '''Make a single API call'''
-        return self._get(urljoin(self.API_ROOT, endpoint), params=params, headers=headers)
+        if endpoint:
+            url = urljoin(self.API_ROOT, endpoint)
+        if not url:
+            raise ValueError('either url or endpoint must be provided')
+        return self._get(url, params=params, headers=headers)
 
 
     def _check(self, response):
