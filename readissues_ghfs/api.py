@@ -1,5 +1,6 @@
 '''
-Create a backup of GitHub issues in JSON files on local filesystem
+Interact with GitHub REST API (v3)
+https://developer.github.com/v3
 '''
 
 
