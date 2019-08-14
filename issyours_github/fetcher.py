@@ -3,7 +3,7 @@ Create a backup of GitHub issues in JSON files on local filesystem
 '''
 
 
-from readissues_ghfs.api import GitHubAPI, GitHubTimestamp
+from issyours_github.api import GitHubAPI, GitHubTimestamp
 
 
 
@@ -12,7 +12,7 @@ class GitHubFetcher:
     Fetch GitHub issues data and store it on local filesystem
     '''
 
-    ABOUT = 'GitHub Issues Archive made with <https://github.com/sio/readissues>'
+    ABOUT = 'GitHub Issues Archive made with <https://github.com/sio/issyours>'
     STAMP_FILE = 'fetcher.json'
     STAMP_VERSION = 1
 

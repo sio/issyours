@@ -15,7 +15,7 @@ import requests
 
 
 
-log = logging.getLogger('readissues.' + __name__.strip('readissues_'))
+log = logging.getLogger('issyours.' + __name__.strip('issyours_'))
 
 
 
@@ -72,7 +72,7 @@ class GitHubAPICaller:
     '''
 
     API_ROOT = 'https://api.github.com'
-    USER_AGENT = 'Issue backup fetcher v0.0.1 <https://github.com/sio/readissues/>'
+    USER_AGENT = 'Issue backup fetcher v0.0.1 <https://github.com/sio/issyours/>'
 
 
     def __init__(self, token):

@@ -5,7 +5,7 @@ import logging
 import os
 
 
-package = 'readissues'
+package = 'issyours'
 log = logging.getLogger(package)
 
 if not log.handlers:
@@ -13,7 +13,7 @@ if not log.handlers:
     handler.setLevel(logging.DEBUG)
     log.addHandler(handler)
 
-if os.environ.get('READISSUES_DEBUG'):
+if os.environ.get('ISSYOURS_DEBUG'):
     log.setLevel(logging.DEBUG)
 else:
     log.setLevel(logging.WARNING)
