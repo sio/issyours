@@ -173,7 +173,7 @@ class GitHubAPI:
             for issue in response.json():
                 url = issue['url']
                 try:
-                    yield self.api.single(url=url, since=since)
+                    yield self.api.single(url=url, since=since).json()
                 except GitHubNotModifiedException:
                     pass
 
@@ -184,7 +184,7 @@ class GitHubAPI:
             repo=repo,
             number=issue_no,
         )
-        return self.api.single(endpoint, since=since)
+        return self.api.single(endpoint, since=since).json()
 
 
     def comments(self, owner, repo, issue_no, since=None):
