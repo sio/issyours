@@ -237,7 +237,7 @@ class GitHubTimestamp:
     ISO_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 
 
-    def __init__(self, dtime=None, header=None, isotime=None):
+    def __init__(self, dtime=None, header=None, isotime=None, unix=None):
         if dtime:
             if isinstance(dtime, datetime):
                 self.datetime = dtime
@@ -249,6 +249,9 @@ class GitHubTimestamp:
             return
         if isotime:
             self.datetime = datetime.strptime(isotime, self.ISO_FORMAT)
+            return
+        if unix:
+            self.datetime = datetime.utcfromtimestamp(int(unix))
             return
 
 
@@ -266,6 +269,12 @@ class GitHubTimestamp:
     def isotime(self):
         '''ISO timestamp format'''
         return datetime.strftime(self.datetime, self.ISO_FORMAT)
+
+
+    @property
+    def unix(self):
+        '''Unix epoch timestamp'''
+        return int(self.datetime.timestamp())
 
 
 
