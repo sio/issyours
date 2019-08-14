@@ -8,6 +8,7 @@ import logging
 import threading
 import time
 from urllib.parse import urljoin
+from datetime import datetime
 
 import requests
 
@@ -23,7 +24,12 @@ class GitHubRateLimitError(RuntimeError):
 
 
 class GitHubAPIError(RuntimeError):
-    '''Raise when some other unrecoverable API error occurs'''
+    '''Raised when some other unrecoverable API error occurs'''
+
+
+
+class GitHubNotModifiedException(Exception):
+    '''Raised when the API response was not modified since the last fetch'''
 
 
 
@@ -82,17 +88,18 @@ class GitHubAPICaller:
         self._requests = session
 
 
-    def single(self, endpoint, params=None):
+    def single(self, endpoint, params=None, since=None):
         '''Fetch a single API response'''
-        return self._call(endpoint, params).json()
+        return next(self.pages(endpoint, params, since))
 
 
-    def pages(self, endpoint, params=None):
+    def pages(self, endpoint, params=None, since=None):
         '''Iterate over paginated API responses'''
-        response = self._call(endpoint, params)
+        headers = self._headers(since=since)
+        response = self._call(endpoint, params, headers)
         yield response.json()
         while 'next' in response.links:
-            response = self._get(response.links['next']['url'])
+            response = self._get(response.links['next']['url'], headers=headers)
             yield response.json()
 
 
@@ -105,9 +112,9 @@ class GitHubAPICaller:
         return response
 
 
-    def _call(self, endpoint, params=None):
+    def _call(self, endpoint, params=None, headers=None):
         '''Make a single API call'''
-        return self._get(urljoin(self.API_ROOT, endpoint), params=params)
+        return self._get(urljoin(self.API_ROOT, endpoint), params=params, headers=headers)
 
 
     def _check(self, response):
@@ -115,12 +122,65 @@ class GitHubAPICaller:
         if response.status_code == 200:
             return
 
+        if response.status_code == 304:  # Not Modified
+            raise GitHubNotModifiedException(response.url)
+
         if response.status_code == 403 \
         and response.headers['X-RateLimit-Remaining'] == '0':
             raise GitHubRateLimitError(readable(response))
 
         if response.status_code == 401:
             raise GitHubAPIError(response.json().get('message', 'Unknown API error'))
+
+
+    def _headers(self, since=None):
+        '''Build extra headers for common use cases'''
+        headers = {}
+        if since:
+            headers['If-Modified-Since'] = GitHubTimestamp(since).header
+        return headers
+
+
+
+class GitHubTimestamp:
+    '''
+    Timestamps as accepted by GitHub API.
+    All timezones must be converted to UTC before instanciating this object.
+    '''
+
+    HEADER_FORMAT = '%a, %d %b %Y %H:%M:%S GMT'
+    ISO_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
+
+
+    def __init__(self, dtime=None, header=None, isotime=None):
+        if dtime:
+            if isinstance(dtime, datetime):
+                self.datetime = dtime
+                return
+            else:
+                raise TypeError('expected datetime object, got {}'.format(dtime.__class__.__name__))
+        if header:
+            self.datetime = datetime.strptime(header, self.HEADER_FORMAT)
+            return
+        if isotime:
+            self.datetime = datetime.strptime(isotime, self.ISO_FORMAT)
+            return
+
+
+    def __repr__(self):
+        return '<{}: {}>'.format(self.__class__.__name__, self.isotime)
+
+
+    @property
+    def header(self):
+        '''Timestamp used in API headers'''
+        return datetime.strftime(self.datetime, self.HEADER_FORMAT)
+
+
+    @property
+    def isotime(self):
+        '''ISO timestamp format'''
+        return datetime.strftime(self.datetime, self.ISO_FORMAT)
 
 
 
