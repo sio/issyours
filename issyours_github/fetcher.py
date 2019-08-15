@@ -3,11 +3,15 @@ Create a backup of GitHub issues in JSON files on local filesystem
 '''
 
 import json
+import logging
 import os
+from datetime import datetime
 from tempfile import mkstemp
 
 from issyours_github.api import GitHubAPI, GitHubTimestamp
 from issyours_github.storage import GitHubFileStorageBase
+
+log = logging.getLogger('issyours.' + __name__.strip('issyours_'))
 
 
 
@@ -31,18 +35,23 @@ class GitHubFetcher(GitHubFileStorageBase):
         owner, project = self.repo.split('/')
 
         since = self.read_stamp()
+        log.info('Fetching issues for %r (modified since: %s)', self.repo, since)
+
         for issue in self.api.issues(owner, project, since):
             since = self.read_stamp(issue['number'])
             self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
             write_json(issue, self.issue_path(issue))
+            log.info('Saved issue #%s', issue['number'])
 
             comments_url = issue['comments_url']
             for comment in self.api.comments(url=comments_url, since=since):
                 write_json(comment, self.comment_path(issue, comment))
+                log.info('Saved comment #%s', comment['id'])
 
             events_url = issue['events_url']
             for event in self.api.events(url=events_url, since=since):
                 write_json(event, self.event_path(issue, event))
+                log.info('Saved event #%s', event['id'])
 
             self.write_stamp(issue)
         self.write_stamp()
@@ -98,7 +107,9 @@ class GitHubFetcher(GitHubFileStorageBase):
         )
         if issue_no:
             stamp['issue_no'] = issue_no
-        write_json(stamp, self._stamp_path(issue_no))
+        dest = self._stamp_path(issue_no)
+        write_json(stamp, dest)
+        log.info('Saved timestamp file: %s', dest)
 
 
     def _stamp_path(self, issue_no=None):
