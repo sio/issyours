@@ -2,6 +2,9 @@
 Create a backup of GitHub issues in JSON files on local filesystem
 '''
 
+import json
+import os
+from tempfile import mkstemp
 
 from issyours_github.api import GitHubAPI, GitHubTimestamp
 
@@ -136,12 +139,19 @@ class FetcherStampValidationError(ValueError):
 
 
 
-def write_json(dictionary, filename):
+def write_json(dictionary, filepath):
     '''Serialize a dictionary into a JSON file'''
-    serialized = json.dumps(dictionary, indent=2, sort_keys=True)
-    safe_write(filename, serialized)
+    serialized = json.dumps(dictionary, indent=2, sort_keys=True, ensure_ascii=False)
+    safe_write(filepath, serialized)
 
 
-def safe_write(filename, content):
+def safe_write(filepath, content, mode='w'):
     '''Safely (over)write a small file'''
-    raise NotImplementedError
+    directory, filename = os.path.split(os.path.abspath(filepath))
+    text_mode = 'b' not in mode
+    if text_mode:
+        content = content.encode('utf-8')
+    tmp, tmppath = mkstemp(prefix=filename, dir=directory, text=text_mode)
+    os.write(tmp, content)
+    os.close(tmp)
+    os.replace(tmppath, filepath)
