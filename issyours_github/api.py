@@ -173,7 +173,11 @@ class GitHubAPI:
             for issue in response.json():
                 url = issue['url']
                 try:
-                    yield self.api.single(url=url, since=since).json()
+                    response = self.api.single(url=url, since=since)
+                    data = response.json()
+                    if 'Last-Modified' in response.headers:
+                        data['header-last-modified'] = response.headers['Last-Modified']
+                    yield data
                 except GitHubNotModifiedException:
                     pass
 
