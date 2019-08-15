@@ -2,6 +2,11 @@
 Common storage interaction methods used both by fetcher and reader
 '''
 
+import os
+
+from issyours_github.api import GitHubTimestamp
+
+
 
 class GitHubFileStorageBase:
     '''Common base class for fetcher and reader'''

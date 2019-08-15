@@ -85,7 +85,7 @@ class GitHubFetcher(GitHubFileStorageBase):
         '''Write signature file after successful completion of whole job or its atomic part'''
         if issue:
             issue_no = issue['number']
-            timestamp = GitHubTimestamp(issue['header-last-modified']).unix
+            timestamp = GitHubTimestamp(header=issue['header-last-modified']).unix
         else:
             issue_no = None
             timestamp = self.last_modified.unix
