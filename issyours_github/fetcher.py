@@ -7,10 +7,11 @@ import os
 from tempfile import mkstemp
 
 from issyours_github.api import GitHubAPI, GitHubTimestamp
+from issyours_github.storage import GitHubFileStorageBase
 
 
 
-class GitHubFetcher:
+class GitHubFetcher(GitHubFileStorageBase):
     '''
     Fetch GitHub issues data and store it on local filesystem
     '''
@@ -21,8 +22,7 @@ class GitHubFetcher:
 
 
     def __init__(self, repo, directory, token):
-        self.repo = repo
-        self.directory = directory
+        super().__init__(repo, directory)
         self.api = GitHubAPI(token)
         self._last_modified = None
 
@@ -100,10 +100,11 @@ class GitHubFetcher:
 
     def _stamp_path(self, issue_no=None):
         '''Calculate path to stamp file'''
-        elements = [self.directory, self.STAMP_FILE]
         if issue_no:
-            elements.insert(1, issue_no)
-        return os.path.join(*(str(e) for e in elements))
+            directory = self.issue_dir(issue_no=issue_no)
+        else:
+            directory = self.directory
+        return os.path.join(directory, self.STAMP_FILE)
 
 
     def _stamp_validate(self, stamp, issue_no=None):
