@@ -67,7 +67,8 @@ class GitHubFetcher(GitHubFileStorageBase):
             for event in self.api.events(url=events_url, since=since):
                 write_json(event, self.event_path(issue, event))
                 log.info('Saved event #%s', event['id'])
-                users.add(event.get('actor', {}).get('login'))
+                if event.get('actor'):
+                    users.add(event.get('actor').get('login'))
 
             users.add(issue['user']['login'])
             for assignee in issue['assignees']:
