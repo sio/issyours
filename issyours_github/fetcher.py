@@ -8,6 +8,8 @@ import os
 from datetime import datetime
 from tempfile import mkstemp
 
+import requests
+
 from issyours_github.api import GitHubAPI, GitHubTimestamp, GitHubNotModifiedException
 from issyours_github.storage import GitHubFileStorageBase
 
@@ -78,9 +80,19 @@ class GitHubFetcher(GitHubFileStorageBase):
             self._persons_seen.add(nickname)
             try:
                 person = self.api.person(nickname, since)
-                write_json(person, self.person_path(person=person))
+                person_file = self.person_path(person=person)
+                write_json(person, person_file)
                 log.info('Saved user @%s', person['login'])
             except GitHubNotModifiedException:
+                continue
+            try:
+                image = requests.get(person['avatar_url'], allow_redirects=True)
+                image.raise_for_status()
+                image_file = os.path.splitext(person_file)[0] + '.jpg'
+                with open(image_file, 'wb') as dest:
+                    dest.write(image.content)
+                    log.info('Saved avatar for @%s', person['login'])
+            except requests.HTTPError:
                 pass
 
 
