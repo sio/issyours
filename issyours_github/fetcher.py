@@ -8,7 +8,7 @@ import os
 from datetime import datetime
 from tempfile import mkstemp
 
-from issyours_github.api import GitHubAPI, GitHubTimestamp
+from issyours_github.api import GitHubAPI, GitHubTimestamp, GitHubNotModifiedException
 from issyours_github.storage import GitHubFileStorageBase
 
 log = logging.getLogger('issyours.' + __name__.strip('issyours_'))
@@ -30,6 +30,7 @@ class GitHubFetcher(GitHubFileStorageBase):
         super().__init__(repo, directory)
         self.api = GitHubAPI(token)
         self._last_modified = None
+        self._persons_seen = set()
 
 
     def fetch(self):
@@ -40,6 +41,7 @@ class GitHubFetcher(GitHubFileStorageBase):
         log.info('Fetching issues for %r (modified since: %s)', self.repo, since)
 
         for issue in self.api.issues(owner, project, since):
+            users = set()
             since = self.read_stamp(issue['number'])
             self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
             write_json(issue, self.issue_path(issue))
@@ -49,14 +51,37 @@ class GitHubFetcher(GitHubFileStorageBase):
             for comment in self.api.comments(url=comments_url, since=since):
                 write_json(comment, self.comment_path(issue, comment))
                 log.info('Saved comment #%s', comment['id'])
+                users.add(comment['user']['login'])
 
             events_url = issue['events_url']
             for event in self.api.events(url=events_url, since=since):
                 write_json(event, self.event_path(issue, event))
                 log.info('Saved event #%s', event['id'])
+                users.add(event['actor']['login'])
+
+            users.add(issue['user']['login'])
+            for assignee in issue['assignees']:
+                users.add(assignee['login'])
+            if issue['closed_by']:
+                users.add(issue['closed_by']['login'])
+            self.fetch_persons(nicknames=users, since=since)
 
             self.write_stamp(issue)
         self.write_stamp()
+
+
+    def fetch_persons(self, nicknames, since=None):
+        '''Fetch data about GitHub user. Execute only once for each nickname seen'''
+        for nickname in nicknames:
+            if not nickname or nickname in self._persons_seen:
+                continue
+            self._persons_seen.add(nickname)
+            try:
+                person = self.api.person(nickname, since)
+                write_json(person, self.person_path(person=person))
+                log.info('Saved user @%s', person['login'])
+            except GitHubNotModifiedException:
+                pass
 
 
     @property

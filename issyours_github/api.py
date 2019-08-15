@@ -226,6 +226,16 @@ class GitHubAPI:
                 yield event
 
 
+    def person(self, nickname=None, since=None, url=None):
+        '''Get information about specific GitHub user'''
+        kwargs = {'since': since}
+        if not url:
+            kwargs['endpoint'] = 'users/{}'.format(nickname)
+        else:
+            kwargs['url'] = url
+        return self.api.single(**kwargs).json()
+
+
 
 @total_ordering
 class GitHubTimestamp:

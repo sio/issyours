@@ -21,7 +21,7 @@ class GitHubFileStorageBase:
         '''Path to the directory containing all data on a single issue'''
         if not issue_no:
             issue_no = issue['number']
-        return os.path.join(self.directory, str(issue_no))
+        return os.path.join(self.directory, 'issues', str(issue_no))
 
 
     def issue_path(self, issue):
@@ -45,3 +45,10 @@ class GitHubFileStorageBase:
             event['id']
         )
         return os.path.join(self.issue_dir(issue), filename)
+
+
+    def person_path(self, nickname=None, person=None):
+        '''Path to individual person's JSON file'''
+        if not nickname:
+            nickname = person['login']
+        return os.path.join(self.directory, 'people', '{}.json'.format(nickname))
