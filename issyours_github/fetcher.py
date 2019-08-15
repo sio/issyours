@@ -240,15 +240,14 @@ def safe_write(filepath, content, mode='w'):
 
 def attachment_urls(body, _pattern=re.compile(
             '('
-            r'http[s]?://[^/]*githubusercontent.com/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*,]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-            r'|http[s]?://github.com/\w+/\w+/files/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*,]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            r'http[s]?://[^/]*githubusercontent.com/[\.\w/&%+-]+'
+            r'|http[s]?://github.com/\w+/\w+/files/[\.\w/&%+-]+'
             ')')):
     '''Detect attachment URLs in the body of GitHub issue/comment'''
     # URL regex from http://urlregex.com/
     # http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+
     if body:
-        for url in _pattern.findall(body):
-            yield url.rstrip(')')  # I couldn't fix that regex
+        yield from _pattern.findall(body)
     else:
         yield from ()
 
