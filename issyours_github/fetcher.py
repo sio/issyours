@@ -153,9 +153,13 @@ def write_json(dictionary, filepath):
 def safe_write(filepath, content, mode='w'):
     '''Safely (over)write a small file'''
     directory, filename = os.path.split(os.path.abspath(filepath))
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
     text_mode = 'b' not in mode
     if text_mode:
         content = content.encode('utf-8')
+
     tmp, tmppath = mkstemp(prefix=filename, dir=directory, text=text_mode)
     os.write(tmp, content)
     os.close(tmp)
