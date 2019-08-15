@@ -8,13 +8,11 @@ import json
 import logging
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import total_ordering
 from urllib.parse import urljoin
 
 import requests
-
-
 
 log = logging.getLogger('issyours.' + __name__.strip('issyours_'))
 
@@ -247,25 +245,25 @@ class GitHubTimestamp:
         if dtime:
             if isinstance(dtime, datetime):
                 self.datetime = dtime
-                return
             elif isinstance(dtime, type(self)):
                 self.datetime = dtime.datetime
-                return
             else:
                 raise TypeError('expected datetime object, got {}'.format(dtime.__class__.__name__))
-        if header:
+        elif header:
             self.datetime = datetime.strptime(header, self.HEADER_FORMAT)
-            return
-        if isotime:
+        elif isotime:
             self.datetime = datetime.strptime(isotime, self.ISO_FORMAT)
-            return
-        if unix:
+        elif unix:
             self.datetime = datetime.utcfromtimestamp(int(unix))
-            return
+        self.datetime = self.datetime.replace(tzinfo=timezone.utc)
 
 
     def __repr__(self):
         return '<{}: {}>'.format(self.__class__.__name__, self.isotime)
+
+
+    def __str__(self):
+        return self.isotime
 
 
     def __eq__(self, other):
