@@ -34,13 +34,16 @@ class GitHubFetcher(GitHubFileStorageBase):
         for issue in self.api.issues(owner, project, since):
             since = self.read_stamp(issue['number'])
             self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
-            self.save_issue(issue)
+            write_json(issue, self.issue_path(issue))
+
             comments_url = issue['comments_url']
             for comment in self.api.comments(url=comments_url, since=since):
-                self.save_comment(comment)
+                write_json(comment, self.comment_path(issue, comment))
+
             events_url = issue['events_url']
             for event in self.api.events(url=events_url, since=since):
-                self.save_event(event)
+                write_json(event, self.event_path(issue, event))
+
             self.write_stamp(issue)
         self.write_stamp()
 
