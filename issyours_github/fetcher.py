@@ -108,9 +108,9 @@ class GitHubFetcher:
     def _stamp_validate(self, stamp, issue_no=None):
         '''Validate stamp file to avoid data corruption with overwriting'''
         validate = {
-            'repo' = self.repo,
-            'fetcher' = self.__class__.__name__,
-            'stamp_version' = self.STAMP_VERSION,
+            'repo': self.repo,
+            'fetcher': self.__class__.__name__,
+            'stamp_version': self.STAMP_VERSION,
         }
         if issue_no:
             validate['issue_no'] = issue_no
