@@ -93,7 +93,7 @@ class GitHubFetcher(GitHubFileStorageBase):
         if self._last_modified is None:
             timestamp = self.read_stamp()
             if timestamp is not None:
-                self._last_modified = GitHubTimestamp(unix=timestamp)
+                self._last_modified = GitHubTimestamp(timestamp)
             else:
                 raise ValueError('Last-Modified has not been set yet')
         return self._last_modified
@@ -107,7 +107,10 @@ class GitHubFetcher(GitHubFileStorageBase):
 
 
     def read_stamp(self, issue_no=None):
-        '''Read timestamp files left from previous runs'''
+        '''
+        Read timestamp files left from previous runs.
+        Return datetime object
+        '''
         stamp_path = self._stamp_path(issue_no)
         if not os.path.exists(stamp_path):
             return None
