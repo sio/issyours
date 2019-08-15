@@ -27,6 +27,24 @@ class GitHubFetcher(GitHubFileStorageBase):
         self._last_modified = None
 
 
+    def fetch(self):
+        owner, project = self.repo.split('/')
+
+        since = self.read_stamp()
+        for issue in self.api.issues(owner, project, since):
+            since = self.read_stamp(issue['number'])
+            self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
+            self.save_issue(issue)
+            comments_url = issue['comments_url']
+            for comment in self.api.comments(url=comments_url, since=since):
+                self.save_comment(comment)
+            events_url = issue['events_url']
+            for event in self.api.events(url=events_url, since=since):
+                self.save_event(event)
+            self.write_stamp(issue)
+        self.write_stamp()
+
+
     @property
     def last_modified(self):
         '''
@@ -47,24 +65,6 @@ class GitHubFetcher(GitHubFileStorageBase):
         if self._last_modified is None \
         or self._last_modified < value:
             self._last_modified = value
-
-
-    def fetch(self):
-        owner, project = self.repo.split('/')
-
-        since = self.read_stamp()
-        for issue in self.api.issues(owner, project, since):
-            since = self.read_stamp(issue['number'])
-            self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
-            self.save_issue(issue)
-            comments_url = issue['comments_url']
-            for comment in self.api.comments(url=comments_url, since=since):
-                self.save_comment(comment)
-            events_url = issue['events_url']
-            for event in self.api.events(url=events_url, since=since):
-                self.save_event(event)
-            self.write_stamp(issue)
-        self.write_stamp()
 
 
     def read_stamp(self, issue_no=None):
