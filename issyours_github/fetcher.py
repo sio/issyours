@@ -52,18 +52,19 @@ class GitHubFetcher:
     def fetch(self):
         owner, project = self.repo.split('/')
 
-        since = None  # TODO: read previous timestamp from directory
+        since = self.read_stamp()
         for issue in self.api.issues(owner, project, since):
+            since = self.read_stamp(issue['number'])
             self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
             self.save_issue(issue)
             comments_url = issue['comments_url']
-            for comment in self.api.comments(url=comments_url, since=...):
+            for comment in self.api.comments(url=comments_url, since=since):
                 self.save_comment(comment)
             events_url = issue['events_url']
-            for event in self.api.events(url=events_url, since=...):
+            for event in self.api.events(url=events_url, since=since):
                 self.save_event(event)
-            self.write_timestamp(issue)
-        self.write_timestamp(global)
+            self.write_stamp(issue)
+        self.write_stamp()
 
 
     def read_stamp(self, issue_no=None):
