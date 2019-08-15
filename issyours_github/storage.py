@@ -65,3 +65,8 @@ class GitHubFileStorageBase:
         filename = 'attach-{}'.format(shorter_hash)
 
         return os.path.join(directory, filename)
+
+
+    def patch_path(self, issue):
+        '''Path to patch file'''
+        return os.path.join(self.issue_dir(issue), 'attached.patch')

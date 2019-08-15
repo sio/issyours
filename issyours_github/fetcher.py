@@ -51,6 +51,11 @@ class GitHubFetcher(GitHubFileStorageBase):
             log.info('Saved issue #%s', issue['number'])
             self.fetch_attachments(issue, issue['body'])
 
+            if 'pull_request' in issue:
+                patch_url = issue['pull_request']['patch_url']
+                download(patch_url, self.patch_path(issue))
+                log.info('Saved patch file for pull request #%s', issue['number'])
+
             comments_url = issue['comments_url']
             for comment in self.api.comments(url=comments_url, since=since):
                 write_json(comment, self.comment_path(issue, comment))
