@@ -307,3 +307,14 @@ class GitHubTimestamp:
     def unix(self):
         '''Unix epoch timestamp'''
         return int(self.datetime.timestamp())
+
+
+
+def readable(response, payload=True):
+    '''Make response readable'''
+    overview = dict(
+        status = response.status_code,
+        headers = dict(response.headers),
+        payload = response.json() if payload else '<...>',
+    )
+    return json.dumps(overview, indent=2, sort_keys=True)
