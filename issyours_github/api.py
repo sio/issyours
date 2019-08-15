@@ -8,8 +8,9 @@ import json
 import logging
 import threading
 import time
-from urllib.parse import urljoin
 from datetime import datetime
+from functools import total_ordering
+from urllib.parse import urljoin
 
 import requests
 
@@ -231,6 +232,7 @@ class GitHubAPI:
 
 
 
+@total_ordering
 class GitHubTimestamp:
     '''
     Timestamps as accepted by GitHub API.
@@ -264,6 +266,20 @@ class GitHubTimestamp:
 
     def __repr__(self):
         return '<{}: {}>'.format(self.__class__.__name__, self.isotime)
+
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self.datetime == other.datetime
+        else:
+            return NotImplemented
+
+
+    def __lt__(self, other):
+        if isinstance(other, type(self)):
+            return self.datetime < other.datetime
+        else:
+            return NotImplemented
 
 
     @property

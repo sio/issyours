@@ -21,6 +21,29 @@ class GitHubFetcher:
         self.repo = repo
         self.directory = directory
         self.api = GitHubAPI(token)
+        self._last_modified = None
+
+
+    @property
+    def last_modified(self):
+        '''
+        The newest Last-Modified value seen by this instance
+        (GitHubTimestamp object)
+        '''
+        if self._last_modified is None:
+            timestamp = self.read_stamp()
+            if timestamp is not None:
+                self._last_modified = GitHubTimestamp(unix=timestamp)
+            else:
+                raise ValueError('Last-Modified has not been set yet')
+        return self._last_modified
+
+
+    @last_modified.setter
+    def last_modified(self, value):
+        if self._last_modified is None \
+        or self._last_modified < value:
+            self._last_modified = value
 
 
     def fetch(self):
@@ -28,6 +51,7 @@ class GitHubFetcher:
 
         since = None  # TODO: read previous timestamp from directory
         for issue in self.api.issues(owner, project, since):
+            self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
             self.save_issue(issue)
             comments_url = issue['comments_url']
             for comment in self.api.comments(url=comments_url, since=...):
@@ -50,10 +74,16 @@ class GitHubFetcher:
         return datetime.utcfromtimestamp(stamp['timestamp'])
 
 
-    def write_stamp(self, issue_no=None):
+    def write_stamp(self, issue=None):
         '''Write signature file after successful completion of whole job or its atomic part'''
+        if issue:
+            issue_no = issue['number']
+            timestamp = GitHubTimestamp(issue['header-last-modified']).unix
+        else:
+            issue_no = None
+            timestamp = self.last_modified.unix
         stamp = dict(
-            timestamp=int(datetime.utcnow().timestamp()),
+            timestamp=timestamp,
             repo=self.repo,
             fetcher=self.__class__.__name__,
             about=self.ABOUT,
