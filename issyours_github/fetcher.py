@@ -5,6 +5,7 @@ Create a backup of GitHub issues in JSON files on local filesystem
 import json
 import logging
 import os
+import re
 from datetime import datetime
 from tempfile import mkstemp
 
@@ -48,12 +49,14 @@ class GitHubFetcher(GitHubFileStorageBase):
             self.last_modified = GitHubTimestamp(isotime=issue['updated_at'])
             write_json(issue, self.issue_path(issue))
             log.info('Saved issue #%s', issue['number'])
+            self.fetch_attachments(issue, issue['body'])
 
             comments_url = issue['comments_url']
             for comment in self.api.comments(url=comments_url, since=since):
                 write_json(comment, self.comment_path(issue, comment))
                 log.info('Saved comment #%s', comment['id'])
                 users.add(comment['user']['login'])
+                self.fetch_attachments(issue, comment['body'])
 
             events_url = issue['events_url']
             for event in self.api.events(url=events_url, since=since):
@@ -86,14 +89,24 @@ class GitHubFetcher(GitHubFileStorageBase):
             except GitHubNotModifiedException:
                 continue
             try:
-                image = requests.get(person['avatar_url'], allow_redirects=True)
-                image.raise_for_status()
                 image_file = os.path.splitext(person_file)[0] + '.jpg'
-                with open(image_file, 'wb') as dest:
-                    dest.write(image.content)
-                    log.info('Saved avatar for @%s', person['login'])
+                download(person['avatar_url'], image_file)
+                log.info('Saved avatar for @%s', person['login'])
             except requests.HTTPError:
-                pass
+                log.debug('Can not fetch: %s', person['avatar_url'])
+
+
+    def fetch_attachments(self, issue, body):
+        '''Fetch attachments linked in the issue/comment body'''
+        for url in attachment_urls(body):
+            dest = self.attachment_path(issue, url)
+            if os.path.exists(dest):
+                continue
+            try:
+                download(url, dest)
+                log.info('Saved attachment: %s', url)
+            except requests.HTTPError:
+                log.debug('Can not fetch: %s', url)
 
 
     @property
@@ -217,3 +230,26 @@ def safe_write(filepath, content, mode='w'):
     os.write(tmp, content)
     os.close(tmp)
     os.replace(tmppath, filepath)
+
+
+def attachment_urls(body, _pattern=re.compile(
+            '('
+            r'http[s]?://[^/]*githubusercontent.com/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*,]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            r'|http[s]?://github.com/\w+/\w+/files/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*,]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+            ')')):
+    '''Detect attachment URLs in the body of GitHub issue/comment'''
+    # URL regex from http://urlregex.com/
+    # http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+
+    if body:
+        for url in _pattern.findall(body):
+            yield url.rstrip(')')  # I couldn't fix that regex
+    else:
+        yield from ()
+
+
+def download(url, dest):
+    '''Download regular files from web'''
+    response = requests.get(url, allow_redirects=True)
+    response.raise_for_status()
+    with open(dest, 'wb') as output:
+        output.write(response.content)

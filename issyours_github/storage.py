@@ -2,6 +2,8 @@
 Common storage interaction methods used both by fetcher and reader
 '''
 
+import base64
+import hashlib
 import os
 
 from issyours_github.api import GitHubTimestamp
@@ -52,3 +54,14 @@ class GitHubFileStorageBase:
         if not nickname:
             nickname = person['login']
         return os.path.join(self.directory, 'people', '{}.json'.format(nickname))
+
+
+    def attachment_path(self, issue, attach_url):
+        '''Path to an attachment file'''
+        directory = self.issue_dir(issue)
+
+        hashed_name = hashlib.md5(attach_url.encode('utf-8')).digest()
+        shorter_hash = base64.urlsafe_b64encode(hashed_name).decode('utf-8').rstrip('=')
+        filename = 'attach-{}'.format(shorter_hash)
+
+        return os.path.join(directory, filename)
