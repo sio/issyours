@@ -26,12 +26,14 @@ class GitHubFetcher(GitHubFileStorageBase):
 
 
     def __init__(self, repo, directory, token):
+        '''Initialize fetcher with GitHub repo name, target directory and OAuth token'''
         super().__init__(repo, directory)
         self.api = GitHubAPI(token)
         self._last_modified = None
 
 
     def fetch(self):
+        '''Fetch all issues modified since the last run'''
         owner, project = self.repo.split('/')
 
         since = self.read_stamp()

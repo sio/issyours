@@ -52,6 +52,7 @@ class GitHubRateLimit:
 
 
     def sleep(self):
+        '''Sleep until rate limit is reset'''
         with self.lock:
             if self.remaining is not None and not self.remaining:
                 log.debug('Sleeping until rate limit is reset')
@@ -59,6 +60,7 @@ class GitHubRateLimit:
 
 
     def update(self, response):
+        '''Update rate limit stats from HTTP response headers'''
         with self.lock:
             self.reset_time = int(response.headers['X-RateLimit-Reset'])
             self.remaining = int(response.headers['X-RateLimit-Remaining'])
@@ -75,6 +77,7 @@ class GitHubAPICaller:
 
 
     def __init__(self, token):
+        '''Initialize API client with OAuth token'''
         self._rate_limit = GitHubRateLimit()
 
         session = requests.Session()
@@ -155,10 +158,12 @@ class GitHubAPI:
     '''
 
     def __init__(self, token):
+        '''Initialize API client with OAuth token'''
         self.api = GitHubAPICaller(token)
 
 
     def issues(self, owner, repo, since=None):
+        '''Iterate over issue dictionaries'''
         endpoint = 'repos/{owner}/{repo}/issues'.format(owner=owner, repo=repo)
         params = {
             'filter': 'all',
@@ -181,17 +186,8 @@ class GitHubAPI:
                     pass
 
 
-    def issue(self, owner, repo, issue_no, since=None):
-        raise RuntimeError  # TODO: is this method needed by anyone?
-        endpoint = 'repos/{owner}/{repo}/issues/{number}'.format(
-            owner=owner,
-            repo=repo,
-            number=issue_no,
-        )
-        return self.api.single(endpoint, since=since).json()
-
-
     def comments(self, owner=None, repo=None, issue_no=None, since=None, url=None):
+        '''Iterate over comment dictionaries'''
         kwargs = {}
         if not url:
             kwargs['endpoint'] = 'repos/{owner}/{repo}/issues/{number}/comments'.format(
@@ -211,6 +207,7 @@ class GitHubAPI:
 
 
     def events(self, owner=None, repo=None, issue_no=None, since=None, url=None):
+        '''Iterate over comment dictionaries'''
         kwargs = {}
         if not url:
             kwargs['endpoint'] = 'repos/{owner}/{repo}/issues/{number}/events'.format(
@@ -242,6 +239,10 @@ class GitHubTimestamp:
 
 
     def __init__(self, dtime=None, header=None, isotime=None, unix=None):
+        '''
+        Create timestamp object either from datetime object or from string
+        in one of common formats
+        '''
         if dtime:
             if isinstance(dtime, datetime):
                 self.datetime = dtime
@@ -296,14 +297,3 @@ class GitHubTimestamp:
     def unix(self):
         '''Unix epoch timestamp'''
         return int(self.datetime.timestamp())
-
-
-
-def readable(response, payload=True):
-    '''Make response readable'''
-    overview = dict(
-        status = response.status_code,
-        headers = dict(response.headers),
-        payload = response.json() if payload else '<...>',
-    )
-    return json.dumps(overview, indent=2, sort_keys=True)
