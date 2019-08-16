@@ -10,7 +10,11 @@ setup(
     author_email='sio.wtf@gmail.com',
     license='AGPLv3',
     platforms='any',
-    entry_points={},
+    entry_points={
+        'console_scripts': [
+            'issyours-github=issyours_github.cli:run',
+        ],
+    },
     packages=find_packages(exclude=('tests',)),
     include_package_data=True,
     install_requires=[
