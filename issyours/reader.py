@@ -9,16 +9,18 @@ from weakref import WeakValueDictionary
 
 
 
-ISSUE_CACHE_SIZE = 50
-
-
-
 class ReaderBase(ABC):
+    '''
+    Abstract base class that implements caching and lazy evaluation for any
+    issue reader
+    '''
+
+    ISSUE_CACHE_SIZE = 50
 
 
     @abstractmethod
     def __init__(self):
-        self._issues_cache = MultiCache(maxsize=ISSUE_CACHE_SIZE)
+        self._issues_cache = MultiCache(maxsize=self.ISSUE_CACHE_SIZE)
 
 
     @abstractmethod
