@@ -3,6 +3,7 @@ Commandline entry point for GitHub Issues fetcher
 '''
 
 
+import logging
 import os
 from argparse import ArgumentParser
 
@@ -14,6 +15,7 @@ ENV_TOKEN = 'ISSYOURS_GITHUB_TOKEN'
 
 def run(*a, **ka):
     args = parse_args(*a, **ka)
+    configure_logging(args.verbose)
     github = GitHubFetcher(args.repo, args.dest, args.oauth_token)
     github.fetch()
 
@@ -42,6 +44,14 @@ def parse_args(*a, **ka):
               'Using a commandline option is less secure and should be avoided.')
              .format(ENV_TOKEN)
     )
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        action='count',
+        default=0,
+        help=('Increase output verbosity. Repeating this argument multiple times '
+              'increases verbosity level even further.'),
+    )
     args = parser.parse_args(*a, **ka)
 
     repo_parts = args.repo.split('/')
@@ -52,3 +62,17 @@ def parse_args(*a, **ka):
         parser.error('GitHub OAuth token was not provided')
 
     return args
+
+
+def configure_logging(verbosity):
+    verbosity_levels = {
+        0: logging.WARNING,
+        1: logging.INFO,
+        2: logging.DEBUG,
+        3: logging.NOTSET,
+    }
+    if verbosity > max(verbosity_levels):
+        verbosity = max(verbosity_levels)
+    level = verbosity_levels.get(verbosity)
+    log = logging.getLogger('issyours')
+    log.level = min(log.level, level)

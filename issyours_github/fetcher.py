@@ -41,7 +41,7 @@ class GitHubFetcher(GitHubFileStorageBase):
         owner, project = self.repo.split('/')
 
         since = self.read_stamp()
-        log.info('Fetching issues for %r (modified since: %s)', self.repo, since)
+        log.warning('Fetching issues for %r (modified since: %s)', self.repo, since)
 
         for issue in self.api.issues(owner, project, since):
             users = set()
@@ -99,7 +99,7 @@ class GitHubFetcher(GitHubFileStorageBase):
                 download(person['avatar_url'], image_file)
                 log.info('Saved avatar for @%s', person['login'])
             except requests.HTTPError:
-                log.debug('Can not fetch: %s', person['avatar_url'])
+                log.error('Can not fetch: %s', person['avatar_url'])
 
 
     def fetch_attachments(self, issue, body):
@@ -112,7 +112,7 @@ class GitHubFetcher(GitHubFileStorageBase):
                 download(url, dest)
                 log.info('Saved attachment: %s', url)
             except requests.HTTPError:
-                log.debug('Can not fetch: %s', url)
+                log.error('Can not fetch: %s', url)
 
 
     @property
