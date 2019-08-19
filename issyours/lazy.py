@@ -91,7 +91,7 @@ class MultiCache:
         droppable_keys = self._droppable()
         if droppable_keys is not None:
             droppable_keys = set(droppable_keys)
-            if oversize < len(droppable_keys):
+            if oversize > len(droppable_keys):
                 # In our use case this should never happen because _drop() is
                 # being called after each __setitem__, so oversize can't be
                 # more than 1
