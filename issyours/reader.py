@@ -112,13 +112,12 @@ class MultiCache:
         self._lru_clock = 0
 
 
-    def __repr__(self):
-        return '<{cls}: weaksize={weaksize}, lrusize={lrusize}, maxsize={maxsize}>'.format(
-            cls=self.__class__.__name__,
-            weaksize=len(self._weak_cache),
-            lrusize=len(self._strong_cache),
-            maxsize=self._maxsize,
-        )
+    def _drop(self):
+        '''Drop items that are worth the lowest'''
+        while len(self._strong_cache) > self._maxsize:
+            garbage = sorted(self._cache_worth, key=self._cache_worth.get)[0]
+            self._strong_cache.pop(garbage)
+            self._cache_worth.pop(garbage)
 
 
     def __setitem__(self, key, value):
@@ -138,13 +137,14 @@ class MultiCache:
         return value
 
 
-    def _drop(self):
-        '''Drop items that are worth the lowest'''
-        while len(self._strong_cache) > self._maxsize:
-            garbage = sorted(self._cache_worth, key=self._cache_worth.get)[0]
-            self._strong_cache.pop(garbage)
-            self._cache_worth.pop(garbage)
-
-
     def __contains__(self, key):
         return key in self._weak_cache
+
+
+    def __repr__(self):
+        return '<{cls}: weaksize={weaksize}, lrusize={lrusize}, maxsize={maxsize}>'.format(
+            cls=self.__class__.__name__,
+            weaksize=len(self._weak_cache),
+            lrusize=len(self._strong_cache),
+            maxsize=self._maxsize,
+        )
