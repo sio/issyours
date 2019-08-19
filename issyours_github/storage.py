@@ -20,15 +20,21 @@ class GitHubFileStorageBase:
 
 
     def issue_dir(self, issue=None, issue_no=None):
-        '''Path to the directory containing all data on a single issue'''
-        if not issue_no:
+        '''
+        Path to the directory containing all data on a single issue.
+        If no issue is specified, return top-level directory with all issues.
+        '''
+        elements = [self.directory, 'issues']
+        if not issue_no and issue:
             issue_no = issue['number']
-        return os.path.join(self.directory, 'issues', str(issue_no))
+        if issue_no:
+            elements.append(str(issue_no))
+        return os.path.join(*elements)
 
 
-    def issue_path(self, issue):
+    def issue_path(self, issue=None, issue_no=None):
         '''Path to the main issue JSON file'''
-        return os.path.join(self.issue_dir(issue), 'issue.json')
+        return os.path.join(self.issue_dir(issue, issue_no), 'issue.json')
 
 
     def comment_path(self, issue, comment):
