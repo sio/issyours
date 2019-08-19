@@ -20,7 +20,7 @@ class ReaderBase(ABC):
 
     @abstractmethod
     def __init__(self):
-        self._issues_cache = MultiCache(maxsize=self.ISSUE_CACHE_SIZE)
+        self._issues_cache = LazyAwareCache(maxsize=self.ISSUE_CACHE_SIZE)
 
 
     @abstractmethod
@@ -101,8 +101,15 @@ class LazyMetadata(SimpleNamespace):
 
 
 class MultiCache:
-    '''Multiparadigm cache with dict-like interface'''
+    '''
+    Multistorage cache with dict-like interface
+
+    This cache stores most recently used items in a regular Python dictionary
+    and also keeps weak references to all seen items until they are garbage
+    collected
+    '''
     # TODO: MultiCache is not thread safe
+
 
     def __init__(self, maxsize=128):
         self._weak_cache = WeakValueDictionary()
@@ -112,12 +119,39 @@ class MultiCache:
         self._lru_clock = 0
 
 
+    def _droppable(self):
+        '''
+        Provide the sequence of cache keys that can be dropped safely.
+        Return None if any cache item may be dropped without extra selection step
+        '''
+        # Intended to be implemented in child classes
+
+
     def _drop(self):
-        '''Drop items that are worth the lowest'''
-        while len(self._strong_cache) > self._maxsize:
-            garbage = sorted(self._cache_worth, key=self._cache_worth.get)[0]
-            self._strong_cache.pop(garbage)
-            self._cache_worth.pop(garbage)
+        '''Drop items that are worth the lowest to maintain max cache size'''
+        oversize = len(self._strong_cache) - self._maxsize
+        if oversize <= 0:
+            return
+
+        droppable_keys = self._droppable()
+        if droppable_keys is not None:
+            droppable_keys = set(droppable_keys)
+            if oversize < len(droppable_keys):
+                # In our use case this should never happen because _drop() is
+                # being called after each __setitem__, so oversize can't be
+                # more than 1
+                raise ValueError('provided set of droppable keys is too small')
+
+        for key in sorted(self._cache_worth, key=self._cache_worth.get):
+            if len(self._strong_cache) > self._maxsize:
+                if droppable_keys and key not in droppable_keys:
+                    continue
+                elif droppable_keys:
+                    droppable_keys.remove(key)
+                self._strong_cache.pop(key)
+                self._cache_worth.pop(key)
+            else:
+                break
 
 
     def __setitem__(self, key, value):
@@ -148,3 +182,19 @@ class MultiCache:
             lrusize=len(self._strong_cache),
             maxsize=self._maxsize,
         )
+
+
+
+class LazyAwareCache(MultiCache):
+    '''Cache object that drops uninitialized LazyObjects first'''
+
+    def _droppable(self):
+        droppable_keys = set()
+        for key, item in self._strong_cache.items():
+            if item._lazy.inner is None:
+                droppable_keys.add(key)
+        if droppable_keys:
+            return droppable_keys  # Select items to drop from this set
+        else:
+            return None  # Use all existing cache items
+                         # if there are no uninitialized ones
