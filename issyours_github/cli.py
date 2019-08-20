@@ -69,7 +69,7 @@ def configure_logging(verbosity):
         0: logging.WARNING,
         1: logging.INFO,
         2: logging.DEBUG,
-        3: logging.NOTSET,
+        3: logging.NOTSET + 1,
     }
     if verbosity > max(verbosity_levels):
         verbosity = max(verbosity_levels)
