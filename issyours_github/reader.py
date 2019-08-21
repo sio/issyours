@@ -44,7 +44,8 @@ class GitHubReader(ReaderBase, GitHubFileStorageBase):
             created_at=GitHubTimestamp(isotime=data['created_at']).datetime,
             modified_at=GitHubTimestamp(isotime=data['updated_at']).datetime,
             fetched_at=None, # TODO: timestamp from fs
-            closed_at=GitHubTimestamp(isotime=data['closed_at']).datetime,
+            closed_at=GitHubTimestamp(isotime=data['closed_at']).datetime \
+                      if data['closed_at'] else None,
         )
         issue.freeze()
         return issue

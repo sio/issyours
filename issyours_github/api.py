@@ -266,6 +266,10 @@ class GitHubTimestamp:
             self.datetime = datetime.strptime(isotime, self.ISO_FORMAT)
         elif unix:
             self.datetime = datetime.utcfromtimestamp(int(unix))
+        if not self.datetime:
+            raise ValueError('can not initialize {} with empty timestamp'.format(
+                self.__class__.__name__
+            ))
         self.datetime = self.datetime.replace(tzinfo=timezone.utc)
 
 
