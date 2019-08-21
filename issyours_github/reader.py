@@ -7,7 +7,11 @@ import json
 import logging
 import os
 
-from issyours.data import Issue, Person
+from issyours.data import (
+    Issue,
+    IssueLabel,
+    Person,
+)
 from issyours.reader import ReaderBase
 from issyours_github.storage import GitHubFileStorageBase
 from issyours_github.api import GitHubTimestamp
@@ -39,7 +43,10 @@ class GitHubReader(ReaderBase, GitHubFileStorageBase):
             title=data['title'],
             body=data['body'], # TODO: html
             url=data['html_url'],
-            labels=None, # TODO: IssueLabel
+            labels=[
+                IssueLabel(name=l['name'], color='#' + l['color'])
+                for l in data['labels']
+            ],
             assignees=None, # TODO: Person
             created_at=GitHubTimestamp(isotime=data['created_at']).datetime,
             modified_at=GitHubTimestamp(isotime=data['updated_at']).datetime,

@@ -3,6 +3,7 @@ Data classes to be used across Issyours project
 '''
 
 
+import re
 from datetime import datetime
 
 import attr
@@ -73,8 +74,17 @@ class IssueEvent:
     pass
 
 
+@attr.s
 class IssueLabel:
-    pass
+    name = attr.ib(type=str)
+    color = attr.ib(type=str)
+
+    _color_regex = re.compile(r'^#[0-9a-f]{6}$', re.IGNORECASE)
+
+    @color.validator
+    def check_color_format(self, attribute, value):
+        if not self._color_regex.match(value):
+            raise ValueError('color must be valid RGB hex string starting with #')
 
 
 
