@@ -47,6 +47,10 @@ class IssueLabel:
 
 @attr.s(frozen=True)
 class Issue:
+    '''
+    Contents of individual issue.
+    Note: attachments() call must return a sequence of stream-like objects
+    '''
     reader      = attr.ib(validator=instance_of(ReaderBase))
     uid         = attr.ib()
     author      = attr.ib(default=None, validator=optional(instance_of(Person)))
@@ -60,3 +64,11 @@ class Issue:
     modified_at = attr.ib(default=None, validator=optional(instance_of(datetime)))
     fetched_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
     closed_at   = attr.ib(default=None, validator=optional(instance_of(datetime)))
+    attachments = attr.ib(default=list)
+
+    @attachments.validator
+    def check_if_callable(self, attribute, value):
+        if not callable(value):
+            raise ValueError('{!r} must be a callable that accepts zero arguments'.format(
+                attribute.name
+            ))

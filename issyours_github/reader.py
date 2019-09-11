@@ -53,6 +53,7 @@ class GitHubReader(ReaderBase, GitHubFileStorageBase):
             fetched_at=None, # TODO: timestamp from fs
             closed_at=GitHubTimestamp(isotime=data['closed_at']).datetime \
                       if data['closed_at'] else None,
+            #attachments=None, # TODO
         )
         return issue
 
