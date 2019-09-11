@@ -20,19 +20,19 @@ log = logging.getLogger('issyours.' + __name__.strip('issyours_'))
 
 
 
-class GitHubReader(ReaderBase, GitHubFileStorageBase):
+class GitHubReader(ReaderBase):
     '''
     Read GitHub issues from local files fetched by GitHubFetcher
     '''
 
     def __init__(self, repo, directory):
-        ReaderBase.__init__(self)
-        GitHubFileStorageBase.__init__(self, repo, directory)
+        super().__init__()
+        self.storage = GitHubFileStorageBase(repo, directory)
 
 
     def _read_issue(self, uid):
         log.debug('Reading issue #{} from local backup'.format(uid))
-        filepath = self.issue_path(issue_no=uid)
+        filepath = self.storage.issue_path(issue_no=uid)
         with open(filepath, 'r') as f:
             data = json.load(f)
         issue = Issue(
@@ -59,7 +59,7 @@ class GitHubReader(ReaderBase, GitHubFileStorageBase):
 
 
     def issue_uids(self, sort_by='created', desc=True):
-        ids = next(os.walk(self.issue_dir()))[1]
+        ids = next(os.walk(self.storage.issue_dir()))[1]
         if sort_by == 'created':
             return sorted(ids, key=int, reverse=desc)
         else:
