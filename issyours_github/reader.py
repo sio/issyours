@@ -6,13 +6,16 @@ Read GitHub issues from JSON files on local filesystem
 import json
 import logging
 import os
+from urllib.parse import urlparse
 
 from issyours.data import (
     Issue,
+    IssueAttachment,
     IssueLabel,
     Person,
 )
 from issyours.reader import ReaderBase
+from issyours_github.fetcher import attachment_urls
 from issyours_github.storage import GitHubFileStorageBase
 from issyours_github.api import GitHubTimestamp
 
@@ -53,7 +56,7 @@ class GitHubReader(ReaderBase):
             fetched_at=None, # TODO: timestamp from fs
             closed_at=GitHubTimestamp(isotime=data['closed_at']).datetime \
                       if data['closed_at'] else None,
-            #attachments=None, # TODO
+            attachments=make_attachments(self.storage, data),
         )
         return issue
 
@@ -67,3 +70,47 @@ class GitHubReader(ReaderBase):
                 self.__class__.__name__,
                 sort_by
             ))
+
+
+def make_attachments(storage, issue_data, comment_data=None):
+    '''
+    Return a generator that yields attachment objects for a particular
+    issue or a comment
+    '''
+    attachments = []
+
+    if comment_data:
+        body = comment_data['body']
+    else:
+        body = issue_data['body']
+        patch_path = storage.patch_path(issue_data)
+        if os.path.exists(patch_path):
+            attachments.append((
+                os.path.basename(patch_path),
+                issue_data['pull_request']['html_url'],
+                patch_path,
+            ))
+
+    linked_files = ((url, storage.attachment_path(issue_data, url))
+                    for url in attachment_urls(body))
+    for url, filepath in linked_files:
+        if os.path.exists(filepath):
+            attachments.append((
+                make_filename(url, filepath),
+                url,
+                filepath,
+            ))
+
+    def generator():
+        for name, url, filepath in attachments:
+            yield IssueAttachment(name=name, url=url, stream=open(filepath, 'rb'))
+
+    return generator
+
+
+def make_filename(url, filepath):
+    '''Generate filename from the source url and the path of the file on disk'''
+    # GitHub urls that we source attachments from are pretty clean already
+    # so there is no need for MIME magic for now
+    parsed = urlparse(url)
+    return parsed.path.split('/')[-1]

@@ -72,3 +72,12 @@ class Issue:
             raise ValueError('{!r} must be a callable that accepts zero arguments'.format(
                 attribute.name
             ))
+
+
+
+@attr.s(frozen=True)
+class IssueAttachment:
+    '''A file that was attached to the issue'''
+    name   = attr.ib()
+    stream = attr.ib()
+    url    = attr.ib(default='')
