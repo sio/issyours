@@ -38,7 +38,7 @@ class GitHubReader(ReaderBase, GitHubFileStorageBase):
         issue = Issue(
             reader=self,
             uid=uid,
-            author=Person(), # TODO: Person
+            author=Person(reader=self), # TODO: Person
             status=data['state'],
             title=data['title'],
             body=data['body'], # TODO: html
@@ -54,7 +54,6 @@ class GitHubReader(ReaderBase, GitHubFileStorageBase):
             closed_at=GitHubTimestamp(isotime=data['closed_at']).datetime \
                       if data['closed_at'] else None,
         )
-        issue.freeze()
         return issue
 
 
