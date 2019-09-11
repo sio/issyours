@@ -22,6 +22,9 @@ class Person:
     picture: stream object containing an image in one of common web formats
     '''
     reader = attr.ib(validator=instance_of(ReaderBase))
+    nickname = attr.ib()
+    fullname = attr.ib(default='')
+    picture = attr.ib(default=None)
 
 
 
