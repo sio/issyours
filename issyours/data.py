@@ -15,24 +15,33 @@ from issyours.reader import ReaderBase
 
 @attr.s(frozen=True)
 class Person:
+    '''
+    Minimal information about a person involved in discussion
+
+    Attributes
+    picture: stream object containing an image in one of common web formats
+    '''
     reader = attr.ib(validator=instance_of(ReaderBase))
 
 
 
 @attr.s(frozen=True)
-class IssueComment:
+class IssueComment:  # TODO
     pass
 
 
 
 @attr.s(frozen=True)
-class IssueEvent:
+class IssueEvent:  # TODO
     pass
 
 
 
 @attr.s(frozen=True)
 class IssueLabel:
+    '''
+    A label (tag) used to categorize issues
+    '''
     name = attr.ib(type=str)
     color = attr.ib(type=str)
 
@@ -49,7 +58,10 @@ class IssueLabel:
 class Issue:
     '''
     Contents of individual issue.
-    Note: attachments() call must return a sequence of stream-like objects
+
+    Attributes
+    attachments: callable that accepts zero arguments and returns a sequence of
+                 stream-like objects
     '''
     reader      = attr.ib(validator=instance_of(ReaderBase))
     uid         = attr.ib()
