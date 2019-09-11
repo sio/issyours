@@ -29,14 +29,26 @@ class Person:
 
 
 @attr.s(frozen=True)
-class IssueComment:  # TODO
-    pass
+class IssueComment:
+    '''A comment on an issue'''
+    issue       = attr.ib(validator=instance_of(Issue))
+    author      = attr.ib(default=None, validator=optional(instance_of(Person)))
+    author_role = attr.ib(default='')
+    body        = attr.ib(default='')
+    body        = attr.ib(default='')
+    created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
+    modified_at = attr.ib(default=None, validator=optional(instance_of(datetime)))
+    attachments = attr.ib(default=list)
 
 
 
 @attr.s(frozen=True)
-class IssueEvent:  # TODO
-    pass
+class IssueEvent:
+    '''An event that has affected the issue in some way'''
+    issue       = attr.ib(validator=instance_of(Issue))
+    type        = attr.ib()
+    data        = attr.ib()
+    created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
 
 
 
