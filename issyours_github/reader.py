@@ -36,6 +36,14 @@ class GitHubReader(ReaderBase):
         self.storage = GitHubFileStorageBase(repo, directory)
 
 
+    def __repr__(self):
+        return '{cls}(repo={repo!r}, directory={dir!r})'.format(
+            cls=self.__class__.__name__,
+            repo=self.storage.repo,
+            dir=self.storage.directory,
+        )
+
+
     def _read_issue(self, uid):
         log.debug('Reading issue #{} from local backup'.format(uid))
         filepath = self.storage.issue_path(issue_no=uid)
