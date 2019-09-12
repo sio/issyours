@@ -29,47 +29,6 @@ class Person:
 
 
 @attr.s(frozen=True)
-class IssueComment:
-    '''A comment on an issue'''
-    issue       = attr.ib(validator=instance_of(Issue))
-    author      = attr.ib(default=None, validator=optional(instance_of(Person)))
-    author_role = attr.ib(default='')
-    body        = attr.ib(default='')
-    body        = attr.ib(default='')
-    created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
-    modified_at = attr.ib(default=None, validator=optional(instance_of(datetime)))
-    attachments = attr.ib(default=list)
-
-
-
-@attr.s(frozen=True)
-class IssueEvent:
-    '''An event that has affected the issue in some way'''
-    issue       = attr.ib(validator=instance_of(Issue))
-    type        = attr.ib()
-    data        = attr.ib()
-    created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
-
-
-
-@attr.s(frozen=True)
-class IssueLabel:
-    '''
-    A label (tag) used to categorize issues
-    '''
-    name = attr.ib(type=str)
-    color = attr.ib(type=str)
-
-    _color_regex = re.compile(r'^#[0-9a-f]{6}$', re.IGNORECASE)
-
-    @color.validator
-    def check_color_format(self, attribute, value):
-        if not self._color_regex.match(value):
-            raise ValueError('color must be valid RGB hex string starting with #')
-
-
-
-@attr.s(frozen=True)
 class Issue:
     '''
     Contents of individual issue.
@@ -108,3 +67,44 @@ class IssueAttachment:
     name   = attr.ib()
     stream = attr.ib()
     url    = attr.ib(default='')
+
+
+
+@attr.s(frozen=True)
+class IssueComment:
+    '''A comment on an issue'''
+    issue       = attr.ib(validator=instance_of(Issue))
+    author      = attr.ib(default=None, validator=optional(instance_of(Person)))
+    author_role = attr.ib(default='')
+    body        = attr.ib(default='')
+    body        = attr.ib(default='')
+    created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
+    modified_at = attr.ib(default=None, validator=optional(instance_of(datetime)))
+    attachments = attr.ib(default=list)
+
+
+
+@attr.s(frozen=True)
+class IssueEvent:
+    '''An event that has affected the issue in some way'''
+    issue       = attr.ib(validator=instance_of(Issue))
+    type        = attr.ib()
+    data        = attr.ib()
+    created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
+
+
+
+@attr.s(frozen=True)
+class IssueLabel:
+    '''
+    A label (tag) used to categorize issues
+    '''
+    name = attr.ib(type=str)
+    color = attr.ib(type=str)
+
+    _color_regex = re.compile(r'^#[0-9a-f]{6}$', re.IGNORECASE)
+
+    @color.validator
+    def check_color_format(self, attribute, value):
+        if not self._color_regex.match(value):
+            raise ValueError('color must be valid RGB hex string starting with #')
