@@ -16,11 +16,13 @@ class ReaderBase(ABC):
     '''
 
     ISSUE_CACHE_SIZE = 50
+    PERSON_CACHE_SIZE = 50
 
 
     @abstractmethod
     def __init__(self):
         self._issues_cache = LazyAwareCache(maxsize=self.ISSUE_CACHE_SIZE)
+        self._persons_cache = LazyAwareCache(maxsize=self.PERSON_CACHE_SIZE)
 
 
     @abstractmethod
@@ -31,6 +33,11 @@ class ReaderBase(ABC):
     @abstractmethod
     def _read_issue(self, uid):
         '''Return a single Issue object from Storage'''
+
+
+    @abstractmethod
+    def _read_person(self, login):
+        '''Return a single Person object from storage'''
 
 
     def issues(self, sort_by='created', desc=True):
@@ -44,9 +51,26 @@ class ReaderBase(ABC):
         Return a single Issue object from Storage.
         Use cached values and lazy evaluation whenever possible.
         '''
-        try:
-            return self._issues_cache[uid]
-        except KeyError:
-            value = LazyObject(self._read_issue, uid)
-            self._issues_cache[uid] = value
-            return value
+        return lazy_method(cache=self._issues_cache,
+                           method=self._read_issue,
+                           key=uid)
+
+
+    def person(self, login):
+        '''
+        Return a single Person object from Storage.
+        Use cached values and lazy evaluation whenever possible.
+        '''
+        return lazy_method(cache=self._persons_cache,
+                           method=self._read_person,
+                           key=login)
+
+
+def lazy_method(cache, method, key):
+    '''Implementation of lazy method'''
+    try:
+        return cache[key]
+    except KeyError:
+        value = LazyObject(method, key)
+        cache[key] = value
+        return value
