@@ -56,7 +56,7 @@ class GitHubReader(ReaderBase):
             assignees=None, # TODO: Person
             created_at=GitHubTimestamp(isotime=data['created_at']).datetime,
             modified_at=GitHubTimestamp(isotime=data['updated_at']).datetime,
-            fetched_at=None, # TODO: timestamp from fs
+            fetched_at=self._fetched_at(uid),
             closed_at=GitHubTimestamp(isotime=data['closed_at']).datetime \
                       if data['closed_at'] else None,
             attachments=make_attachments(self.storage, data),
@@ -73,6 +73,13 @@ class GitHubReader(ReaderBase):
                 self.__class__.__name__,
                 sort_by
             ))
+
+
+    def _fetched_at(self, issue_no):
+        '''Read modification time from filesystem'''
+        stamp = self.storage._stamp_path(issue_no)
+        unix = os.path.getmtime(stamp)
+        return GitHubTimestamp(unix=unix).datetime
 
 
 def make_attachments(storage, issue_data, comment_data=None):
