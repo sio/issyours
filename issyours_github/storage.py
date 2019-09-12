@@ -76,3 +76,12 @@ class GitHubFileStorageBase:
     def patch_path(self, issue):
         '''Path to patch file'''
         return os.path.join(self.issue_dir(issue), 'attached.patch')
+
+
+    def _stamp_path(self, issue_no=None):
+        '''Calculate path to stamp file'''
+        if issue_no:
+            directory = self.issue_dir(issue_no=issue_no)
+        else:
+            directory = self.directory
+        return os.path.join(directory, 'fetcher.json')

@@ -24,7 +24,6 @@ class GitHubFetcher(GitHubFileStorageBase):
     '''
 
     ABOUT = 'GitHub Issues Archive made with <https://github.com/sio/issyours>'
-    STAMP_FILE = 'fetcher.json'
     STAMP_VERSION = 1
 
 
@@ -171,15 +170,6 @@ class GitHubFetcher(GitHubFileStorageBase):
         dest = self._stamp_path(issue_no)
         write_json(stamp, dest)
         log.info('Saved timestamp file: %s', dest)
-
-
-    def _stamp_path(self, issue_no=None):
-        '''Calculate path to stamp file'''
-        if issue_no:
-            directory = self.issue_dir(issue_no=issue_no)
-        else:
-            directory = self.directory
-        return os.path.join(directory, self.STAMP_FILE)
 
 
     def _stamp_validate(self, stamp, issue_no=None):
