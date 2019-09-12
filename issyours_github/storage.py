@@ -62,6 +62,13 @@ class GitHubFileStorageBase:
         return os.path.join(self.directory, 'people', '{}.json'.format(nickname))
 
 
+    def person_image(self, nickname=None, person=None):
+        '''Path to person's profile picture'''
+        person_file = self.person_path(nickname=nickname, person=person)
+        image_file = os.path.splitext(person_file)[0] + '.jpg'
+        return image_file
+
+
     def attachment_path(self, issue, attach_url):
         '''Path to an attachment file'''
         directory = self.issue_dir(issue)

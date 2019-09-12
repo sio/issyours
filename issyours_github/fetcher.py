@@ -94,7 +94,7 @@ class GitHubFetcher(GitHubFileStorageBase):
             except GitHubNotModifiedException:
                 continue
             try:
-                image_file = os.path.splitext(person_file)[0] + '.jpg'
+                image_file = self.person_image(person=person)
                 download(person['avatar_url'], image_file)
                 log.info('Saved avatar for @%s', person['login'])
             except requests.HTTPError:
