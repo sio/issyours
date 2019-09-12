@@ -44,7 +44,7 @@ class GitHubReader(ReaderBase):
         issue = Issue(
             reader=self,
             uid=uid,
-            author=Person(reader=self, nickname=''), # TODO: Person
+            author=self.person(data['user']['login']),
             status=data['state'],
             title=data['title'],
             body=render_markdown(data['body']),
@@ -53,7 +53,7 @@ class GitHubReader(ReaderBase):
                 IssueLabel(name=l['name'], color='#' + l['color'])
                 for l in data['labels']
             ],
-            assignees=None, # TODO: Person
+            assignees=[self.person(u['login']) for u in data['assignees']],
             created_at=GitHubTimestamp(isotime=data['created_at']).datetime,
             modified_at=GitHubTimestamp(isotime=data['updated_at']).datetime,
             fetched_at=self._fetched_at(uid),
@@ -80,6 +80,24 @@ class GitHubReader(ReaderBase):
         stamp = self.storage._stamp_path(issue_no)
         unix = os.path.getmtime(stamp)
         return GitHubTimestamp(unix=unix).datetime
+
+
+    def _read_person(self, login):
+        log.debug('Reading account information for @{}'.format(login))
+        person_file = self.storage.person_path(login)
+        with open(person_file, 'r') as f:
+            data = json.load(f)
+        image_file = self.storage.person_image(login)
+        if os.path.exists(image_file):
+            picture = open(image_file, 'rb')
+        else:
+            picture = None
+        return Person(
+            reader=self,
+            nickname=login,
+            fullname=data['name'],
+            picture=picture,
+        )
 
 
 def make_attachments(storage, issue_data, comment_data=None):
