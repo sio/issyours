@@ -39,7 +39,7 @@ class Issue:
     '''
     reader      = attr.ib(validator=instance_of(ReaderBase))
     uid         = attr.ib()
-    author      = attr.ib(default=None, validator=optional(instance_of(Person)))
+    author      = attr.ib(type=Person)
     status      = attr.ib(default='')
     title       = attr.ib(default='')
     body        = attr.ib(default='')
@@ -73,8 +73,8 @@ class IssueAttachment:
 @attr.s(frozen=True)
 class IssueComment:
     '''A comment on an issue'''
-    issue       = attr.ib(validator=instance_of(Issue))
-    author      = attr.ib(default=None, validator=optional(instance_of(Person)))
+    issue       = attr.ib(type=Issue)
+    author      = attr.ib(type=Person)
     author_role = attr.ib(default='')
     body        = attr.ib(default='')
     body        = attr.ib(default='')
@@ -87,7 +87,7 @@ class IssueComment:
 @attr.s(frozen=True)
 class IssueEvent:
     '''An event that has affected the issue in some way'''
-    issue       = attr.ib(validator=instance_of(Issue))
+    issue       = attr.ib(type=Issue)
     type        = attr.ib()
     data        = attr.ib()
     created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
