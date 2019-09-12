@@ -8,6 +8,9 @@ import logging
 import os
 from urllib.parse import urlparse
 
+from markdown import markdown
+from markdown.extensions import fenced_code, codehilite, nl2br
+
 from issyours.data import (
     Issue,
     IssueAttachment,
@@ -44,7 +47,7 @@ class GitHubReader(ReaderBase):
             author=Person(reader=self, nickname=''), # TODO: Person
             status=data['state'],
             title=data['title'],
-            body=data['body'], # TODO: html
+            body=render_markdown(data['body']),
             url=data['html_url'],
             labels=[
                 IssueLabel(name=l['name'], color='#' + l['color'])
@@ -114,3 +117,24 @@ def make_filename(url, filepath):
     # so there is no need for MIME magic for now
     parsed = urlparse(url)
     return parsed.path.split('/')[-1]
+
+
+MARKDOWN_CONFIG={
+    'extensions': [x.makeExtension() for x in [
+        fenced_code,
+        codehilite,
+        nl2br,
+    ]],
+    'extension_configs': {
+        'markdown.extensions.codehilite': {
+            'css_class': 'highlight',
+            'guess_lang': False,
+        },
+        'markdown.extensions.extra': {},
+        'markdown.extensions.meta': {},
+    },
+    'output_format': 'html5',
+}
+def render_markdown(text):
+    '''Render markdown as HTML following GitHub conventions'''
+    return markdown(text, **MARKDOWN_CONFIG)
