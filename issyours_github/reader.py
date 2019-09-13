@@ -76,9 +76,9 @@ class GitHubReader(ReaderBase):
         return issue
 
 
-    def issue_uids(self, sort_by='created', desc=True):
+    def issue_uids(self, sort_by='created_at', desc=True):
         ids = next(os.walk(self.storage.issue_dir()))[1]
-        if sort_by == 'created':
+        if sort_by == 'created_at':
             return sorted(ids, key=int, reverse=desc)
         else:
             raise NotImplementedError('{} does not support sorting by {!r}'.format(

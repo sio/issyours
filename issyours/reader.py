@@ -26,7 +26,7 @@ class ReaderBase(ABC):
 
 
     @abstractmethod
-    def issue_uids(self, sort_by='created', desc=True):
+    def issue_uids(self, sort_by='created_at', desc=True):
         '''Yield unique identificators for all issues contained in Storage'''
 
 
@@ -50,7 +50,7 @@ class ReaderBase(ABC):
         '''Yield events for a given issue object'''
 
 
-    def issues(self, sort_by='created', desc=True):
+    def issues(self, sort_by='created_at', desc=True):
         '''Yield Issue objects in the specified order'''
         for uid in self.issue_uids(sort_by, desc):
             yield self.issue(uid)
