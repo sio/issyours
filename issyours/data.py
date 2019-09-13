@@ -71,6 +71,39 @@ class Issue:
         yield from self.reader._get_events(self, sort_by, desc)
 
 
+    def feed(self, desc=False):
+        '''
+        Yield comments and events in chronological order
+
+        Generates tuples of (object, string) where string describes the kind of
+        object being returned
+        '''
+        sort_by = 'created_at'
+
+        comments = self.comments(sort_by, desc)
+        events = self.events(sort_by, desc)
+
+        comment, event = _get_next(comments), _get_next(events)
+        while True:
+            if not comment and not event:
+                break
+            elif (not event and comment) \
+            or comment.created_at <= event.created_at:
+                yield comment, 'comment'
+                comment = _get_next(comments)
+            else:
+                yield event, 'event'
+                event = _get_next(events)
+
+
+
+def _get_next(iterator, default=None):
+    try:
+        return next(iterator)
+    except StopIteration:
+        return default
+
+
 
 @attr.s(frozen=True)
 class IssueAttachment:
