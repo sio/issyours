@@ -3,9 +3,10 @@ dist/
 build/
 *.egg-info/
 
-.venv
+.venv*
 venv
 venv.bat
 
+demo-*
 *.dat
 secret*
