@@ -66,6 +66,11 @@ class Issue:
         yield from self.reader._get_comments(self, sort_by, desc)
 
 
+    def events(self, sort_by='created_at', desc=False):
+        '''Yield related events'''
+        yield from self.reader._get_events(self, sort_by, desc)
+
+
 
 @attr.s(frozen=True)
 class IssueAttachment:
@@ -93,6 +98,7 @@ class IssueComment:
 class IssueEvent:
     '''An event that has affected the issue in some way'''
     issue       = attr.ib(type=Issue)
+    author      = attr.ib(type=Person)
     type        = attr.ib()
     data        = attr.ib()
     created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))

@@ -7,6 +7,7 @@ import json
 import logging
 import os
 from glob import glob
+from typing import Mapping
 from urllib.parse import urlparse
 
 from markdown import markdown
@@ -16,6 +17,7 @@ from issyours.data import (
     Issue,
     IssueAttachment,
     IssueComment,
+    IssueEvent,
     IssueLabel,
     Person,
 )
@@ -128,6 +130,64 @@ class GitHubReader(ReaderBase):
                 attachments=make_attachments(self.storage, issue_no=issue.uid, comment_data=data),
             )
 
+
+    def _get_events(self, issue, sort_by='created_at', desc=False):
+        if not sort_by == 'created_at':
+            raise ValueError('unsupported sorting method: {}'.format(sort_by))
+        directory = os.path.dirname(self.storage.issue_path(issue_no=issue.uid))
+        pattern = 'event-*.json'
+        for filename in sorted(glob(os.path.join(directory, pattern)), reverse=desc):
+            with open(filename) as f:
+                data = json.load(f)
+            author_uid = data.get('actor', {}).get('login')
+            yield IssueEvent(
+                issue=issue,
+                author=self.person(author_uid) if author_uid else None,
+                type=data['event'],
+                data=extract_event_data(data),  # TODO: review usefullness of individual fields
+                created_at=GitHubTimestamp(isotime=data['created_at']).datetime,
+            )
+
+
+
+def extract_event_data(data):
+    '''Transform GitHub event data into issyours event data'''
+    good_keys = {
+        # key: further nested path
+        'assigner': ('login'),
+        'commit_id': (),
+        'dismissed_review': ('dismissal_message'),
+        'lock_reason': (),
+        'milestone': (),
+        'rename': (),
+        'requester': (),
+    }
+    result = dict()
+    for key, value in data.items():
+        if not value:
+            continue
+        if key in good_keys:
+            result[key] = _nested_dict_lookup(value, *good_keys[key])
+        elif key in {'assignees', 'requested_reviewers'}:
+            result[key] = [u['login'] for u in value]
+        elif key in {'label', 'labels'}:
+            if not 'labels' in result:
+                labels = result['labels'] = []
+            if isinstance(value, Mapping):
+                value = [value,]
+            for l in value:
+                labels.append(IssueLabel(l['name'], '#' + l['color']))
+    return result
+
+
+def _nested_dict_lookup(dictionary, *keys, default=None):
+    result = dictionary
+    for key in keys:
+        try:
+            result = result[key]
+        except KeyError:
+            return default
+    return result
 
 
 def make_attachments(storage, issue_data=None, issue_no=None, comment_data=None):

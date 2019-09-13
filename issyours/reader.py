@@ -45,6 +45,11 @@ class ReaderBase(ABC):
         '''Yield comments for a given issue object'''
 
 
+    @abstractmethod
+    def _get_events(self, issue, sort_by='created_at', desc=False):
+        '''Yield events for a given issue object'''
+
+
     def issues(self, sort_by='created', desc=True):
         '''Yield Issue objects in the specified order'''
         for uid in self.issue_uids(sort_by, desc):
