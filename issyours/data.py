@@ -52,12 +52,18 @@ class Issue:
     closed_at   = attr.ib(default=None, validator=optional(instance_of(datetime)))
     attachments = attr.ib(default=list)
 
+
     @attachments.validator
     def check_if_callable(self, attribute, value):
         if not callable(value):
             raise ValueError('{!r} must be a callable that accepts zero arguments'.format(
                 attribute.name
             ))
+
+
+    def comments(self, sort_by='created_at', desc=False):
+        '''Yield related comments'''
+        yield from self.reader._get_comments(self, sort_by, desc)
 
 
 
@@ -76,7 +82,6 @@ class IssueComment:
     issue       = attr.ib(type=Issue)
     author      = attr.ib(type=Person)
     author_role = attr.ib(default='')
-    body        = attr.ib(default='')
     body        = attr.ib(default='')
     created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
     modified_at = attr.ib(default=None, validator=optional(instance_of(datetime)))

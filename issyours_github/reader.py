@@ -6,6 +6,7 @@ Read GitHub issues from JSON files on local filesystem
 import json
 import logging
 import os
+from glob import glob
 from urllib.parse import urlparse
 
 from markdown import markdown
@@ -14,6 +15,7 @@ from markdown.extensions import fenced_code, codehilite, nl2br
 from issyours.data import (
     Issue,
     IssueAttachment,
+    IssueComment,
     IssueLabel,
     Person,
 )
@@ -108,7 +110,27 @@ class GitHubReader(ReaderBase):
         )
 
 
-def make_attachments(storage, issue_data, comment_data=None):
+    def _get_comments(self, issue, sort_by='created_at', desc=False):
+        if not sort_by == 'created_at':
+            raise ValueError('unsupported sorting method: {}'.format(sort_by))
+        directory = os.path.dirname(self.storage.issue_path(issue_no=issue.uid))
+        pattern = 'comment-*.json'
+        for filename in sorted(glob(os.path.join(directory, pattern)), reverse=desc):
+            with open(filename) as f:
+                data = json.load(f)
+            yield IssueComment(
+                issue=issue,
+                author=self.person(data['user']['login']),
+                author_role=data['author_association'],  # TODO: convert to consistent subset
+                body=render_markdown(data['body']),  # TODO: emoji reactions
+                created_at=GitHubTimestamp(isotime=data['created_at']).datetime,
+                modified_at=GitHubTimestamp(isotime=data['updated_at']).datetime,
+                attachments=make_attachments(self.storage, issue_no=issue.uid, comment_data=data),
+            )
+
+
+
+def make_attachments(storage, issue_data=None, issue_no=None, comment_data=None):
     '''
     Return a generator that yields attachment objects for a particular
     issue or a comment
@@ -119,6 +141,7 @@ def make_attachments(storage, issue_data, comment_data=None):
         body = comment_data['body']
     else:
         body = issue_data['body']
+        issue_no = issue_data['number']
         patch_path = storage.patch_path(issue_data)
         if os.path.exists(patch_path):
             attachments.append((
@@ -127,7 +150,7 @@ def make_attachments(storage, issue_data, comment_data=None):
                 patch_path,
             ))
 
-    linked_files = ((url, storage.attachment_path(issue_data, url))
+    linked_files = ((url, storage.attachment_path(url, issue_no=issue_no))
                     for url in attachment_urls(body))
     for url, filepath in linked_files:
         if os.path.exists(filepath):

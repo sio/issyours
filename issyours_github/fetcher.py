@@ -104,7 +104,7 @@ class GitHubFetcher(GitHubFileStorageBase):
     def fetch_attachments(self, issue, body):
         '''Fetch attachments linked in the issue/comment body'''
         for url in attachment_urls(body):
-            dest = self.attachment_path(issue, url)
+            dest = self.attachment_path(url, issue)
             if os.path.exists(dest):
                 continue
             try:

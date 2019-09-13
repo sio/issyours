@@ -40,6 +40,11 @@ class ReaderBase(ABC):
         '''Return a single Person object from storage'''
 
 
+    @abstractmethod
+    def _get_comments(self, issue, sort_by='created_at', desc=False):
+        '''Yield comments for a given issue object'''
+
+
     def issues(self, sort_by='created', desc=True):
         '''Yield Issue objects in the specified order'''
         for uid in self.issue_uids(sort_by, desc):

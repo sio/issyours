@@ -69,9 +69,9 @@ class GitHubFileStorageBase:
         return image_file
 
 
-    def attachment_path(self, issue, attach_url):
+    def attachment_path(self, attach_url, issue=None, issue_no=None):
         '''Path to an attachment file'''
-        directory = self.issue_dir(issue)
+        directory = self.issue_dir(issue, issue_no)
 
         hashed_name = hashlib.md5(attach_url.encode('utf-8')).digest()
         shorter_hash = base64.urlsafe_b64encode(hashed_name).decode('utf-8').rstrip('=')
