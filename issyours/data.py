@@ -54,7 +54,7 @@ class Issue:
 
 
     @attachments.validator
-    def check_if_callable(self, attribute, value):
+    def _check_if_callable(self, attribute, value):
         if not callable(value):
             raise ValueError('{!r} must be a callable that accepts zero arguments'.format(
                 attribute.name
@@ -149,6 +149,6 @@ class IssueLabel:
     _color_regex = re.compile(r'^#[0-9a-f]{6}$', re.IGNORECASE)
 
     @color.validator
-    def check_color_format(self, attribute, value):
+    def _check_color_format(self, attribute, value):
         if not self._color_regex.match(value):
             raise ValueError('color must be valid RGB hex string starting with #')
