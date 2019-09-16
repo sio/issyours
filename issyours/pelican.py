@@ -23,15 +23,38 @@ class IssueGenerator(Generator):
             prefix = kwargs.get('prefix', '')
             self.issue_readers[prefix] = issue_reader
 
+        self.url_template = self.settings.get(
+            'ISSYOURS_ISSUE_URL',
+            'issue/{slug}.html'
+        )
+        self.dest_template = self.settings.get(
+            'ISSYOURS_ISSUE_SAVE_AS',
+            self.url_template if self.url_template.endswith('.html') else self.url_template + '/index.html'
+        )
+
 
     def generate_output(self, writer):  # TODO
         for prefix, reader in self.issue_readers.items():
             for issue in reader.issues():
-                print('{prefix}-{uid}: {title}'.format(
+                dest = _format(self.dest_template, issue, prefix)
+                url = _format(self.url_template, issue, prefix)
+                print('{prefix}-{uid}: {title}\n  url={url}\n  dest={dest}'.format(
                     prefix=prefix,
                     uid=issue.uid,
                     title=issue.title,
+                    url=url,
+                    dest=dest,
                 ))
+
+
+
+def _format(template, issue, prefix=''):
+    '''Format string based on issue fields'''
+    return template.format(
+        prefix=prefix,
+        uid=issue.uid,
+        slug=issue.uid,
+    )
 
 
 def get_generators(pelican_object):
