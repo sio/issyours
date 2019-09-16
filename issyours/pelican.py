@@ -31,6 +31,7 @@ class IssueGenerator(Generator):
             'ISSYOURS_ISSUE_SAVE_AS',
             self.url_template if self.url_template.endswith('.html') else self.url_template + '/index.html'
         )
+        self.issue_template = self.get_template('issue')
 
 
     def generate_output(self, writer):  # TODO
@@ -38,13 +39,13 @@ class IssueGenerator(Generator):
             for issue in reader.issues():
                 dest = _format(self.dest_template, issue, prefix)
                 url = _format(self.url_template, issue, prefix)
-                print('{prefix}-{uid}: {title}\n  url={url}\n  dest={dest}'.format(
-                    prefix=prefix,
-                    uid=issue.uid,
-                    title=issue.title,
+                writer.write_file(
+                    name=dest,
+                    template=self.issue_template,
+                    context=dict(issue=issue),
+                    relative_urls=self.settings['RELATIVE_URLS'],
                     url=url,
-                    dest=dest,
-                ))
+                )
 
 
 

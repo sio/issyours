@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ issue.title }}</h2>
+    <div class="issue">
+        {{ issue.body }}
+    </div>
+    {% for comment in issue.comments() %}
+    <div class="issue-comment">
+        {{ comment.body }}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

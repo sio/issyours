@@ -5,7 +5,7 @@
 
 import issyours.pelican
 PLUGINS = [issyours.pelican]
-
+THEME = 'issyours_theme'
 
 
 #
