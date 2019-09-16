@@ -5,18 +5,32 @@ import logging
 import os
 
 
-package = 'issyours'
-log = logging.getLogger(package)
+class ShyLogHandler(logging.StreamHandler):
+    '''
+    A log handler that emits messages only if root logger has no other handlers
+    '''
 
-if not log.handlers:
-    handler = logging.StreamHandler()
-    handler.setLevel(logging.DEBUG)
-    log.addHandler(handler)
+    root = logging.getLogger()
 
-if os.environ.get('ISSYOURS_DEBUG'):
-    log.setLevel(logging.DEBUG)
-else:
-    log.setLevel(logging.WARNING)
+    def emit(self, record):
+        if not self.root.hasHandlers():
+            super().emit(record)
 
-del(handler)
-del(package)
+
+
+def setup():
+    package = 'issyours'
+    log = logging.getLogger(package)
+
+    if not log.hasHandlers():
+        handler = ShyLogHandler()
+        handler.setLevel(logging.DEBUG)
+        log.addHandler(handler)
+
+    if os.environ.get('ISSYOURS_DEBUG'):
+        log.setLevel(logging.DEBUG)
+    else:
+        log.setLevel(logging.WARNING)
+
+
+setup()
