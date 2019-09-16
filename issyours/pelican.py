@@ -33,10 +33,30 @@ class IssueGenerator(Generator):
         )
         self.issue_template = self.get_template('issue')
 
+        self.index_url = self.settings.get(
+            'ISSYOURS_LIST_URL',
+            'issues/index.html'
+        )
+        self.index_dest = self.settings.get(
+            'ISSYOURS_LIST_SAVE_AS',
+            self.index_url if self.index_url.endswith('.html') else self.index_url + '/index.html'
+        )
+        self.index_template = self.get_template('issues')
+
 
     def generate_output(self, writer):  # TODO
         for prefix, reader in self.issue_readers.items():
-            for issue in reader.issues():
+            issues = list(reader.issues())
+            writer.write_file(
+                name=self.index_dest,
+                template=self.index_template,
+                context={},
+                relative_urls=self.settings['RELATIVE_URLS'],
+                paginated={'issues': issues},
+                template_name='issues',
+                url=self.index_url,
+            )
+            for issue in issues:
                 dest = _format(self.dest_pattern, issue, prefix)
                 url = _format(self.url_pattern, issue, prefix)
                 writer.write_file(

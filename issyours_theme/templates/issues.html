@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <ol>
+        {% for issue in issues_page.object_list %}
+        <li>{{ issue.uid }}<a href="#">{{ issue.title }}</a></li>
+        {% endfor %}
+    </ol>
+</div>
+{% if issues_page.has_other_pages() %}
+<p class="issues-paginator">
+    {% if issues_page.has_previous() %}
+    <a href="{{ SITEURL }}/{{ issues_previous_page.url }}">Previous page</a>
+    {% endif %}
+    {% if issues_page.has_next() %}
+    <a href="{{ SITEURL }}/{{ issues_next_page.url }}">Next page</a>
+    {% endif %}
+</p>
+{% endif %}
+{% endblock %}
