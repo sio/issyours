@@ -4,8 +4,8 @@
 <div class="container">
     <ol>
         {% for uid in issues_page.object_list %}
-        {% set issue = reader.issue(uid) %}
-        <li>{{ issue.uid }}<a href="#">{{ issue.title }}</a></li>
+        {% set issue = get_issue(uid) %}
+        <li>{{ issue.uid }}<a href="{{ SITEURL }}/{{ issue.url }}">{{ issue.title }}</a></li>
         {% endfor %}
     </ol>
 </div>

@@ -3,6 +3,8 @@ Pelican plugin for rendering issues archive on static website
 '''
 
 
+from types import SimpleNamespace
+
 from pelican import signals
 from pelican.generators import Generator
 
@@ -46,36 +48,76 @@ class IssueGenerator(Generator):
 
     def generate_output(self, writer):  # TODO
         for prefix, reader in self.issue_readers.items():
-            issues = list(reader.issue_uids())
+            def get_issue(uid):
+                issue = reader.issue(uid)
+                return IssueWrapper(
+                    issue=issue,
+                    prefix=prefix,
+                    url_pattern=self.url_pattern,
+                    dest_pattern=self.dest_pattern,
+                )
+
+            issue_uids = list(reader.issue_uids())
             writer.write_file(
                 name=self.index_dest,
                 template=self.index_template,
-                context=dict(reader=reader),
+                context=dict(get_issue=get_issue),
                 relative_urls=self.settings['RELATIVE_URLS'],
-                paginated={'issues': issues},
+                paginated={'issues': issue_uids},
                 template_name='issues',
                 url=self.index_url,
             )
-            for issue in reader.issues():
-                dest = _format(self.dest_pattern, issue, prefix)
-                url = _format(self.url_pattern, issue, prefix)
+            for uid in issue_uids:
+                issue = get_issue(uid)
                 writer.write_file(
-                    name=dest,
+                    name=issue.save_as,
                     template=self.issue_template,
                     context=dict(issue=issue),
                     relative_urls=self.settings['RELATIVE_URLS'],
-                    url=url,
+                    url=issue.url,
                 )
 
 
 
-def _format(pattern, issue, prefix=''):
-    '''Format string based on issue fields'''
-    return pattern.format(
-        prefix=prefix,
-        uid=issue.uid,
-        slug=issue.uid,
-    )
+class IssueWrapper:
+    '''Helper class that adds some methods to any given issue object'''
+
+
+    def __init__(self, issue, prefix, url_pattern, dest_pattern):
+        self._issue = SimpleNamespace(
+            ref=issue,
+            prefix=prefix,
+            url_pattern=url_pattern,
+            dest_pattern=dest_pattern,
+        )
+
+
+    def __getattr__(self, attr):
+        return getattr(self._issue.ref, attr)
+
+
+    @property
+    def url(self):
+        '''Return URL for referring to this issue'''
+        return self._format(self._issue.url_pattern)
+
+
+    @property
+    def save_as(self):
+        '''Return file path for saving issue page'''
+        return self._format(self._issue.dest_pattern)
+
+
+    def _format(self, pattern):
+        '''Format string based on issue fields'''
+        issue = self._issue.ref
+        prefix = self._issue.prefix
+        return pattern.format(
+            prefix=prefix,
+            uid=issue.uid,
+            slug=issue.uid,
+        )
+
 
 
 def get_generators(pelican_object):
