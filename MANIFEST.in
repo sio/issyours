@@ -1,2 +1,3 @@
 recursive-include . README*
 recursive-include . LICENSE*
+include issyours/templates/*

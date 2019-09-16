@@ -3,10 +3,14 @@ Pelican plugin for rendering issues archive on static website
 '''
 
 
+import logging
+from pkg_resources import resource_string
 from types import SimpleNamespace
 
 from pelican import signals
-from pelican.generators import Generator
+from pelican.generators import Generator, PelicanTemplateNotFound
+
+log = logging.getLogger(__name__)
 
 
 
@@ -14,6 +18,22 @@ class IssueGenerator(Generator):
     '''
     Obtain issue information from storage and create nice pages for each issue
     '''
+
+
+    def get_template(self, name):
+        try:
+            return super().get_template(name)
+        except PelicanTemplateNotFound:
+            package = __name__.split('.')[0]
+            code = resource_string(package, 'templates/{}.html'.format(name))
+            if not code:
+                raise e
+            log.warning(
+                ('Theme provides no template for {!r}, '
+                 'falling back to a very basic one').format(name)
+            )
+            self._templates[name] = self.env.from_string(code.decode('utf-8'))
+            return self._templates[name]
 
 
     def generate_context(self):  # TODO
