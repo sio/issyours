@@ -12,13 +12,13 @@ from tempfile import mkstemp
 import requests
 
 from issyours_github.api import GitHubAPI, GitHubTimestamp, GitHubNotModifiedException
-from issyours_github.storage import GitHubFileStorageBase
+from issyours_github.storage import GitHubFileStorage
 
 log = logging.getLogger('issyours.' + __name__.strip('issyours_'))
 
 
 
-class GitHubFetcher(GitHubFileStorageBase):
+class GitHubFetcher(GitHubFileStorage):
     '''
     Fetch GitHub issues data and store it on local filesystem
     '''
@@ -144,7 +144,7 @@ class GitHubFetcher(GitHubFileStorageBase):
         stamp_path = self._stamp_path(issue_no)
         if not os.path.exists(stamp_path):
             return None
-        with open(stamp_path) as f:
+        with open(stamp_path, encoding=self.ENCODING) as f:
             stamp = json.load(f)
         self._stamp_validate(stamp, issue_no)
         return datetime.utcfromtimestamp(stamp['timestamp'])

@@ -10,8 +10,11 @@ from issyours_github.api import GitHubTimestamp
 
 
 
-class GitHubFileStorageBase:
+class GitHubFileStorage:
     '''Common base class for fetcher and reader'''
+
+
+    ENCODING = 'utf-8'
 
 
     def __init__(self, repo, directory):

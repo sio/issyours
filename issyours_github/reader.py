@@ -23,7 +23,7 @@ from issyours.data import (
 )
 from issyours.reader import ReaderBase
 from issyours_github.fetcher import attachment_urls
-from issyours_github.storage import GitHubFileStorageBase
+from issyours_github.storage import GitHubFileStorage
 from issyours_github.api import GitHubTimestamp
 
 log = logging.getLogger('issyours.' + __name__.strip('issyours_'))
@@ -37,7 +37,7 @@ class GitHubReader(ReaderBase):
 
     def __init__(self, repo, directory):
         super().__init__()
-        self.storage = GitHubFileStorageBase(repo, directory)
+        self.storage = GitHubFileStorage(repo, directory)
 
 
     def __repr__(self):
@@ -51,7 +51,7 @@ class GitHubReader(ReaderBase):
     def _read_issue(self, uid):
         log.debug('Reading issue #{} from local backup'.format(uid))
         filepath = self.storage.issue_path(issue_no=uid)
-        with open(filepath, 'r') as f:
+        with open(filepath, 'r', encoding=self.storage.ENCODING) as f:
             data = json.load(f)
         issue = Issue(
             reader=self,
@@ -97,7 +97,7 @@ class GitHubReader(ReaderBase):
     def _read_person(self, login):
         log.debug('Reading account information for @{}'.format(login))
         person_file = self.storage.person_path(login)
-        with open(person_file, 'r') as f:
+        with open(person_file, 'r', encoding=self.storage.ENCODING) as f:
             data = json.load(f)
         image_file = self.storage.person_image(login)
         if os.path.exists(image_file):
@@ -118,7 +118,7 @@ class GitHubReader(ReaderBase):
         directory = os.path.dirname(self.storage.issue_path(issue_no=issue.uid))
         pattern = 'comment-*.json'
         for filename in sorted(glob(os.path.join(directory, pattern)), reverse=desc):
-            with open(filename) as f:
+            with open(filename, encoding=self.storage.ENCODING) as f:
                 data = json.load(f)
             yield IssueComment(
                 issue=issue,
@@ -137,7 +137,7 @@ class GitHubReader(ReaderBase):
         directory = os.path.dirname(self.storage.issue_path(issue_no=issue.uid))
         pattern = 'event-*.json'
         for filename in sorted(glob(os.path.join(directory, pattern)), reverse=desc):
-            with open(filename) as f:
+            with open(filename, encoding=self.storage.ENCODING) as f:
                 data = json.load(f)
             author_uid = data.get('actor', {}).get('login')
             yield IssueEvent(
