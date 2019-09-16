@@ -23,13 +23,13 @@ class IssueGenerator(Generator):
             prefix = kwargs.get('prefix', '')
             self.issue_readers[prefix] = issue_reader
 
-        self.url_template = self.settings.get(
+        self.url_pattern = self.settings.get(
             'ISSYOURS_ISSUE_URL',
             'issue/{slug}.html'
         )
-        self.dest_template = self.settings.get(
+        self.dest_pattern = self.settings.get(
             'ISSYOURS_ISSUE_SAVE_AS',
-            self.url_template if self.url_template.endswith('.html') else self.url_template + '/index.html'
+            self.url_pattern if self.url_pattern.endswith('.html') else self.url_pattern + '/index.html'
         )
         self.issue_template = self.get_template('issue')
 
@@ -37,8 +37,8 @@ class IssueGenerator(Generator):
     def generate_output(self, writer):  # TODO
         for prefix, reader in self.issue_readers.items():
             for issue in reader.issues():
-                dest = _format(self.dest_template, issue, prefix)
-                url = _format(self.url_template, issue, prefix)
+                dest = _format(self.dest_pattern, issue, prefix)
+                url = _format(self.url_pattern, issue, prefix)
                 writer.write_file(
                     name=dest,
                     template=self.issue_template,
@@ -49,9 +49,9 @@ class IssueGenerator(Generator):
 
 
 
-def _format(template, issue, prefix=''):
+def _format(pattern, issue, prefix=''):
     '''Format string based on issue fields'''
-    return template.format(
+    return pattern.format(
         prefix=prefix,
         uid=issue.uid,
         slug=issue.uid,
