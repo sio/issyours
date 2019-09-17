@@ -8,8 +8,10 @@ PLUGINS = [issyours.pelican]
 
 RELATIVE_URLS = True
 DEFAULT_PAGINATION = 15
+LOCALE = 'en_US.UTF-8'
+DEFAULT_LANG = 'en'
 
-#THEME = 'issyours_theme'
+THEME = 'issyours_theme/alchemy'
 
 
 #

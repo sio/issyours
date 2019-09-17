@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ issue.title|striptags }} {{ super() }}{% endblock %}
+
+{% block page_header %}
+    {{ issue.title }}
+    <a href="{{ issue.original_url }}"><small>#{{ issue.prefix }}{{ issue.uid }}</small></a>
+{% endblock %}
+
+{% block content %}
+<section class="badges lead">
+    <span class="badge text-uppercase badge-{{ 'danger' if issue.closed_at else 'success' }}">{{ issue.status }}</span>
+    {% for label in issue.labels %}
+    <span class="badge text-{{ 'white' if label.is_dark else 'black' }}" style="background: {{ label.color }}">{{ label.name }}</span>
+    {% endfor %}
+</section>
+<section id="content" class="body">
+    <div class="card mt-4">
+        <div class="card-header text-secondary">
+            <span class="user">{{ issue.author.nickname }}</span>
+            submitted on
+            <abbr title="{{ issue.created_at.isoformat() }}">{{ local_date(issue.created_at) }}</abbr>
+        </div>
+        <div class="card-body">{{ issue.body }}</div>
+    </div>
+    {% for comment in issue.comments() %}
+    <div class="card mt-4">
+        <div class="card-header text-secondary">
+            <span class="user">{{ comment.author.nickname }}</span>
+            commented on
+            <abbr title="{{ comment.created_at.isoformat() }}">{{ local_date(comment.created_at) }}</abbr>
+        </div>
+        <div class="card-body">{{ comment.body }}</div>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}
