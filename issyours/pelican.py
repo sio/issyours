@@ -40,6 +40,9 @@ class IssueGenerator(Generator):
     def generate_context(self):
         self.rewrite_rules = self.settings['ISSYOURS_REWRITE_URLS']  # TODO
 
+        date_format = self.settings['DEFAULT_DATE_FORMAT']  # TODO: multiple languages?
+        self.context['local_date'] = lambda dt: dt.strftime(date_format)
+
         self.issue_readers = {}
         for cls, kwargs in self.settings['ISSYOURS_SOURCES'].items():
             issue_reader = cls(**kwargs.get('init', {}))
