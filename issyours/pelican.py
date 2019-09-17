@@ -4,6 +4,7 @@ Pelican plugin for rendering issues archive on static website
 
 
 import logging
+import re
 from pkg_resources import resource_string
 from types import SimpleNamespace
 
@@ -54,7 +55,7 @@ class IssueGenerator(Generator):
 
         self.url_pattern = self.settings.get(
             'ISSYOURS_ISSUE_URL',
-            'issue/{slug}.html'
+            'issue/{prefix}{slug}.html'
         )
         self.dest_pattern = self.settings.get(
             'ISSYOURS_ISSUE_SAVE_AS',
@@ -62,7 +63,7 @@ class IssueGenerator(Generator):
         )
         self.index_url = self.settings.get(
             'ISSYOURS_LIST_URL',
-            'issues/index.html'
+            'issues/{prefix}/index.html'
         )
         self.index_dest = self.settings.get(
             'ISSYOURS_LIST_SAVE_AS',
@@ -83,13 +84,13 @@ class IssueGenerator(Generator):
 
             issue_uids = list(reader.issue_uids())
             writer.write_file(
-                name=self.index_dest,
+                name=_pattern(self.index_dest, prefix=prefix),
                 template=self.index_template,
                 context=dict(get_issue=get_issue),
                 relative_urls=self.settings['RELATIVE_URLS'],
                 paginated={'issues': issue_uids},
                 template_name='issues',
-                url=self.index_url,
+                url=_pattern(self.index_url, prefix=prefix),
             )
             for uid in issue_uids:
                 issue = get_issue(uid)
@@ -136,12 +137,18 @@ class IssueWrapper:
         '''Format string based on issue fields'''
         issue = self._issue.ref
         prefix = self._issue.prefix
-        return pattern.format(
+        return _pattern(
+            pattern,
             prefix=prefix,
             uid=issue.uid,
             slug=issue.uid,
         )
 
+
+
+def _pattern(pattern, __double_slash=re.compile('//*'), **kw):
+    '''Format index patterns'''
+    return __double_slash.sub('/', pattern.format(**kw))
 
 
 def get_generators(pelican_object):
