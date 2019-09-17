@@ -43,7 +43,7 @@ class Issue:
     status      = attr.ib(default='')
     title       = attr.ib(default='')
     body        = attr.ib(default='')
-    url         = attr.ib(default='')
+    original_url         = attr.ib(default='')
     labels      = attr.ib(factory=list)
     assignees   = attr.ib(factory=list)
     created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
@@ -110,7 +110,7 @@ class IssueAttachment:
     '''A file that was attached to the issue'''
     name   = attr.ib()
     stream = attr.ib()
-    url    = attr.ib(default='')
+    original_url    = attr.ib(default='')
 
 
 

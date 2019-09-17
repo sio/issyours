@@ -60,7 +60,7 @@ class GitHubReader(ReaderBase):
             status=data['state'],  # TODO: convert to consistent subset of statuses
             title=data['title'],
             body=render_markdown(data['body']),
-            url=data['html_url'],
+            original_url=data['html_url'],
             labels=[
                 IssueLabel(name=l['name'], color='#' + l['color'])
                 for l in data['labels']
@@ -222,7 +222,7 @@ def make_attachments(storage, issue_data=None, issue_no=None, comment_data=None)
 
     def generator():
         for name, url, filepath in attachments:
-            yield IssueAttachment(name=name, url=url, stream=open(filepath, 'rb'))
+            yield IssueAttachment(name=name, original_url=url, stream=open(filepath, 'rb'))
 
     return generator
 
