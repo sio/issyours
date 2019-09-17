@@ -45,6 +45,9 @@ class IssueGenerator(Generator):
             prefix = kwargs.get('prefix', '')
             self.issue_readers[prefix] = issue_reader
 
+        self.issue_template = self.get_template('issue')
+        self.index_template = self.get_template('issues')
+
         pagination = self.settings['PAGINATED_TEMPLATES']
         if 'issues' not in pagination:
             pagination['issues'] = None  # Use default number of items per page
@@ -57,8 +60,6 @@ class IssueGenerator(Generator):
             'ISSYOURS_ISSUE_SAVE_AS',
             self.url_pattern if self.url_pattern.endswith('.html') else self.url_pattern + '/index.html'
         )
-        self.issue_template = self.get_template('issue')
-
         self.index_url = self.settings.get(
             'ISSYOURS_LIST_URL',
             'issues/index.html'
@@ -67,7 +68,6 @@ class IssueGenerator(Generator):
             'ISSYOURS_LIST_SAVE_AS',
             self.index_url if self.index_url.endswith('.html') else self.index_url + '/index.html'
         )
-        self.index_template = self.get_template('issues')
 
 
     def generate_output(self, writer):  # TODO
