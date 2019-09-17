@@ -36,8 +36,8 @@ class IssueGenerator(Generator):
             return self._templates[name]
 
 
-    def generate_context(self):  # TODO
-        self.rewrite_rules = self.settings['ISSYOURS_REWRITE_URLS']
+    def generate_context(self):
+        self.rewrite_rules = self.settings['ISSYOURS_REWRITE_URLS']  # TODO
 
         self.issue_readers = {}
         for cls, kwargs in self.settings['ISSYOURS_SOURCES'].items():
@@ -70,7 +70,7 @@ class IssueGenerator(Generator):
         )
 
 
-    def generate_output(self, writer):  # TODO
+    def generate_output(self, writer):
         for prefix, reader in self.issue_readers.items():
             def get_issue(uid):
                 issue = reader.issue(uid)
