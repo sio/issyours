@@ -152,3 +152,11 @@ class IssueLabel:
     def _check_color_format(self, attribute, value):
         if not self._color_regex.match(value):
             raise ValueError('color must be valid RGB hex string starting with #')
+
+
+    @property
+    def is_dark(self):
+        '''Return True if label color is considered dark by human eye'''
+        hex_values = (self.color[i:i+2] for i in (1,3,5))
+        red, green, blue = (int('0x%s' % h, base=16) for h in hex_values)
+        return red * 0.299 + green * 0.587 + blue * 0.114 <= 186  # https://stackoverflow.com/a/3943023
