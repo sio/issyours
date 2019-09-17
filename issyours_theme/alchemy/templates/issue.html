@@ -4,7 +4,7 @@
 
 {% block page_header %}
     {{ issue.title }}
-    <a href="{{ issue.original_url }}"><small>#{{ issue.prefix }}{{ issue.uid }}</small></a>
+    <a href="{{ issue.original_url }}"><small>#{{ issue.slug }}</small></a>
 {% endblock %}
 
 {% block content %}
