@@ -7,3 +7,5 @@
 - [ ] Custom nice theme
 - [ ] README for the project
 - [ ] Explain licensing: Pelican is a dependency, Matomo is inspiration
+- [ ] Test on a large dataset
+- [ ] Profile memory and CPU usage
