@@ -28,6 +28,13 @@ class Person:
 
 
 
+def _role(text):
+    if not text or text.strip().lower() in {'none', 'null', 'nul', 'nil'}:
+        return ''
+    return text.strip()
+
+
+
 @attr.s(frozen=True)
 class Issue:
     '''
@@ -40,6 +47,7 @@ class Issue:
     reader      = attr.ib(validator=instance_of(ReaderBase))
     uid         = attr.ib()
     author      = attr.ib(type=Person)
+    author_role = attr.ib(default='', converter=_role)
     status      = attr.ib(default='')
     title       = attr.ib(default='')
     body        = attr.ib(default='')
@@ -119,7 +127,7 @@ class IssueComment:
     '''A comment on an issue'''
     issue       = attr.ib(type=Issue)
     author      = attr.ib(type=Person)
-    author_role = attr.ib(default='')
+    author_role = attr.ib(default='', converter=_role)
     body        = attr.ib(default='')
     created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
     modified_at = attr.ib(default=None, validator=optional(instance_of(datetime)))
