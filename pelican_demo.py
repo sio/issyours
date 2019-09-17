@@ -26,10 +26,6 @@ from issyours_github import GitHubReader
 #ISSYOURS_ISSUE_SAVE_AS = 'issue/{prefix}{slug}/index.html'
 #ISSYOURS_LIST_URL = 'issues/'
 #ISSYOURS_LIST_SAVE_AS = 'issues/index.html'
-ISSYOURS_PAGINATION = (
-    (1, '{base_name}/', '{base_name}/index.html'),
-    (2, '{base_name}/{number}/', '{base_name}/{number}/index.html'),
-)
 ISSYOURS_SOURCES = {
     GitHubReader: {
         'init': {
