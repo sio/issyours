@@ -58,7 +58,7 @@ class IssueGenerator(Generator):
 
         self.url_pattern = self.settings.get(
             'ISSYOURS_ISSUE_URL',
-            'issue/{prefix}{slug}.html'
+            'issue/{slug}.html'
         )
         self.dest_pattern = self.settings.get(
             'ISSYOURS_ISSUE_SAVE_AS',
@@ -139,15 +139,23 @@ class IssueWrapper:
         return self._format(self._issue.dest_pattern)
 
 
+    @property
+    def prefix(self):
+        return self._issue.prefix
+
+
+    @property
+    def slug(self):
+        return self.prefix + self.uid
+
+
     def _format(self, pattern):
         '''Format string based on issue fields'''
-        issue = self._issue.ref
-        prefix = self._issue.prefix
         return _pattern(
             pattern,
-            prefix=prefix,
-            uid=issue.uid,
-            slug=issue.uid,
+            prefix=self.prefix,
+            uid=self.uid,
+            slug=self.slug,
         )
 
 
