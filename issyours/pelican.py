@@ -83,21 +83,24 @@ class IssueGenerator(Generator):
                 )
 
             issue_uids = list(reader.issue_uids())
+            context = self.context.copy()
+            context['get_issue'] = get_issue
             writer.write_file(
                 name=_pattern(self.index_dest, prefix=prefix),
                 template=self.index_template,
-                context=dict(get_issue=get_issue),
+                context=context,
                 relative_urls=self.settings['RELATIVE_URLS'],
                 paginated={'issues': issue_uids},
                 template_name='issues',
                 url=_pattern(self.index_url, prefix=prefix),
             )
             for uid in issue_uids:
-                issue = get_issue(uid)
+                context = self.context.copy()
+                context['issue'] = issue = get_issue(uid)
                 writer.write_file(
                     name=issue.save_as,
                     template=self.issue_template,
-                    context=dict(issue=issue),
+                    context=context,
                     relative_urls=self.settings['RELATIVE_URLS'],
                     url=issue.url,
                 )

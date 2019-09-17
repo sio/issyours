@@ -1,7 +1,11 @@
-{% extends "base.html" %}
+{% extends "!theme/base.html" %}
+
+{% block title %}
+{{issue.title | striptags }}
+{% endblock %}
 
 {% block content %}
-<div class="container">
+<section id="content" class="body">
     <h2>{{ issue.title }}</h2>
     <div class="issue">
         {{ issue.body }}
@@ -11,5 +15,5 @@
         {{ comment.body }}
     </div>
     {% endfor %}
-</div>
+</section>
 {% endblock %}

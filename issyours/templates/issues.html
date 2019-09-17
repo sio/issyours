@@ -1,22 +1,26 @@
-{% extends "base.html" %}
+{% extends "!theme/base.html" %}
+
+{% block title %}
+Issues (page {{ issues_page.number }}/{{ issues_paginator.num_pages }})
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <ol>
+<section id="content" class="body">
+    <ul>
         {% for uid in issues_page.object_list %}
         {% set issue = get_issue(uid) %}
-        <li>{{ issue.uid }}<a href="{{ SITEURL }}/{{ issue.url }}">{{ issue.title }}</a></li>
+        <li>#{{ issue.uid }} <a href="{{ SITEURL }}/{{ issue.url }}">{{ issue.title }}</a></li>
         {% endfor %}
-    </ol>
-</div>
-{% if issues_page.has_other_pages() %}
-<p class="issues-paginator">
-    {% if issues_page.has_previous() %}
-    <a href="{{ SITEURL }}/{{ issues_previous_page.url }}">Previous page</a>
+    </ul>
+    {% if issues_page.has_other_pages() %}
+    <p class="issues-paginator">
+        {% if issues_page.has_previous() %}
+        <a href="{{ SITEURL }}/{{ issues_previous_page.url }}">Previous page</a>
+        {% endif %}
+        {% if issues_page.has_next() %}
+        <a href="{{ SITEURL }}/{{ issues_next_page.url }}">Next page</a>
+        {% endif %}
+    </p>
     {% endif %}
-    {% if issues_page.has_next() %}
-    <a href="{{ SITEURL }}/{{ issues_next_page.url }}">Next page</a>
-    {% endif %}
-</p>
-{% endif %}
+</section>
 {% endblock %}
