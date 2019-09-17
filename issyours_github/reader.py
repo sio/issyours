@@ -57,6 +57,7 @@ class GitHubReader(ReaderBase):
             reader=self,
             uid=uid,
             author=self.person(data['user']['login']),
+            author_role=data['author_association'],
             status=data['state'],  # TODO: convert to consistent subset of statuses
             title=data['title'],
             body=render_markdown(data['body']),
