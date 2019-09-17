@@ -140,7 +140,10 @@ class GitHubReader(ReaderBase):
         for filename in sorted(glob(os.path.join(directory, pattern)), reverse=desc):
             with open(filename, encoding=self.storage.ENCODING) as f:
                 data = json.load(f)
-            author_uid = data.get('actor', {}).get('login')
+            if data['event'] in {'mentioned',}:
+                continue
+            author_data = data['actor']
+            author_uid = author_data.get('login') if author_data else None
             yield IssueEvent(
                 issue=issue,
                 author=self.person(author_uid) if author_uid else None,
