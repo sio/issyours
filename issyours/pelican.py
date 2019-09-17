@@ -45,6 +45,10 @@ class IssueGenerator(Generator):
             prefix = kwargs.get('prefix', '')
             self.issue_readers[prefix] = issue_reader
 
+        pagination = self.settings['PAGINATED_TEMPLATES']
+        if 'issues' not in pagination:
+            pagination['issues'] = None  # Use default number of items per page
+
         self.url_pattern = self.settings.get(
             'ISSYOURS_ISSUE_URL',
             'issue/{slug}.html'

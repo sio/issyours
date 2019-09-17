@@ -10,13 +10,7 @@ RELATIVE_URLS = True
 DEFAULT_PAGINATION = 15
 
 THEME = 'issyours_theme'
-PAGINATED_TEMPLATES = {
-    'index': None,
-    'tag': None,
-    'category': None,
-    'author': None,
-    'issues': None,
-}
+
 
 #
 # Issyours plugin configuration
