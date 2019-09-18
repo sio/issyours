@@ -11,7 +11,8 @@ DEFAULT_PAGINATION = 15
 LOCALE = 'en_US.UTF-8'
 DEFAULT_LANG = 'en'
 
-THEME = 'issyours_theme/alchemy'
+THEME = '../../_cloned/pelican-alchemy/alchemy'
+THEME_TEMPLATES_OVERRIDES = ['issyours_themes/alchemy']
 
 
 #
