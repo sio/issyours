@@ -21,7 +21,7 @@
             submitted on
             <abbr title="{{ issue.created_at.isoformat() }}">{{ local_date(issue.created_at) }}</abbr>
             {% if issue.author_role %}
-            <span class="badge mt-1 float-right btn-outline-secondary font-weight-normal">{{ issue.author_role }}</span>
+            <span class="badge mt-1 float-right font-weight-normal">{{ issue.author_role }}</span>
             {% endif %}
         </div>
         <div class="card-body">{{ issue.body }}</div>
@@ -33,7 +33,7 @@
             commented on
             <abbr title="{{ comment.created_at.isoformat() }}">{{ local_date(comment.created_at) }}</abbr>
             {% if comment.author_role %}
-            <span class="badge mt-1 float-right btn-outline-secondary font-weight-normal">{{ comment.author_role }}</span>
+            <span class="badge mt-1 float-right font-weight-normal">{{ comment.author_role }}</span>
             {% endif %}
         </div>
         <div class="card-body">{{ comment.body }}</div>

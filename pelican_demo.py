@@ -11,8 +11,9 @@ DEFAULT_PAGINATION = 15
 LOCALE = 'en_US.UTF-8'
 DEFAULT_LANG = 'en'
 
-THEME = '../../_cloned/pelican-alchemy/alchemy'
+THEME = '../pelican-alchemy/alchemy'
 THEME_TEMPLATES_OVERRIDES = ['issyours_themes/alchemy']
+BOOTSTRAP_CSS = 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/yeti/bootstrap.min.css'
 
 
 #
