@@ -1,5 +1,33 @@
 {% extends "base.html" %}
 
+{% macro show_user(person) %}
+    <span class="user">
+        {{ person.nickname }}
+        <div class="popover bs-popover-bottom">
+            <h3 class="popover-header">{{ person.fullname or person.nickname }}</h3>
+            <div class="popover-body"><a href="{{ person.original_url }}" target="_blank">Go to profile</a></div>
+        </div>
+    </span>
+{% endmacro %}
+
+{% macro show_date(dtime) %}
+    <abbr title="{{ dtime.isoformat() }}">{{ local_date(dtime) }}</abbr>
+{% endmacro %}
+
+{% macro show_card(data, type) %}
+    <div class="card mt-4">
+        <div class="card-header text-secondary">
+            {{ show_user(data.author) }}
+            {{ 'submitted on' if type == 'issue' else 'commented on' }}
+            {{ show_date(data.created_at) }}
+            {% if data.author_role %}
+            <span class="badge mt-1 float-right font-weight-normal">{{ data.author_role }}</span>
+            {% endif %}
+        </div>
+        <div class="card-body">{{ data.body }}</div>
+    </div>
+{% endmacro %}
+
 {% block title %}{{ issue.title|striptags }} {{ super() }}{% endblock %}
 
 {% block page_header %}
@@ -15,41 +43,9 @@
     {% endfor %}
 </section>
 <section id="content" class="body">
-    <div class="card mt-4">
-        <div class="card-header text-secondary">
-            <span class="user">
-                {{ issue.author.nickname }}
-                <div class="popover bs-popover-bottom">
-                    <h3 class="popover-header">{{ issue.author.fullname or issue.author.nickname }}</h3>
-                    <div class="popover-body"><a href="{{ issue.author.original_url }}" target="_blank">Go to profile</a></div>
-                </div>
-            </span>
-            submitted on
-            <abbr title="{{ issue.created_at.isoformat() }}">{{ local_date(issue.created_at) }}</abbr>
-            {% if issue.author_role %}
-            <span class="badge mt-1 float-right font-weight-normal">{{ issue.author_role }}</span>
-            {% endif %}
-        </div>
-        <div class="card-body">{{ issue.body }}</div>
-    </div>
+    {{ show_card(issue, 'issue') }}
     {% for comment in issue.comments() %}
-    <div class="card mt-4">
-        <div class="card-header text-secondary">
-            <span class="user">
-                {{ comment.author.nickname }}
-                <div class="popover bs-popover-bottom">
-                    <h3 class="popover-header">{{ comment.author.fullname or comment.author.nickname }}</h3>
-                    <div class="popover-body"><a href="{{ comment.author.original_url }}" target="_blank">Go to profile</a></div>
-                </div>
-            </span>
-            commented on
-            <abbr title="{{ comment.created_at.isoformat() }}">{{ local_date(comment.created_at) }}</abbr>
-            {% if comment.author_role %}
-            <span class="badge mt-1 float-right font-weight-normal">{{ comment.author_role }}</span>
-            {% endif %}
-        </div>
-        <div class="card-body">{{ comment.body }}</div>
-    </div>
+    {{ show_card(comment, 'comment') }}
     {% endfor %}
 </section>
 {% endblock %}
