@@ -97,7 +97,7 @@ class Issue:
             if not comment and not event:
                 break
             elif (not event and comment) \
-            or comment.created_at <= event.created_at:
+            or (comment and (comment.created_at <= event.created_at)):
                 yield comment, 'comment'
                 comment = _get_next(comments)
             else:
