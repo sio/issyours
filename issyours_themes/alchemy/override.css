@@ -1,0 +1,9 @@
+.user .popover {
+    display: none;
+    top: 1.5rem;
+    left: 2rem;
+}
+.user:hover .popover,
+.user .popover:hover {
+    display: block
+}

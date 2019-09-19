@@ -109,6 +109,7 @@ class GitHubReader(ReaderBase):
             reader=self,
             nickname=login,
             fullname=data['name'],
+            original_url=data['html_url'],
             picture=picture,
         )
 

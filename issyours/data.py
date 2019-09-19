@@ -24,6 +24,7 @@ class Person:
     reader = attr.ib(validator=instance_of(ReaderBase))
     nickname = attr.ib()
     fullname = attr.ib(default='')
+    original_url = attr.ib(default='')
     picture = attr.ib(default=None)
 
 

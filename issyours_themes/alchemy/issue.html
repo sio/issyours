@@ -17,7 +17,13 @@
 <section id="content" class="body">
     <div class="card mt-4">
         <div class="card-header text-secondary">
-            <span class="user">{{ issue.author.nickname }}</span>
+            <span class="user">
+                {{ issue.author.nickname }}
+                <div class="popover bs-popover-bottom">
+                    <h3 class="popover-header">{{ issue.author.fullname or issue.author.nickname }}</h3>
+                    <div class="popover-body"><a href="{{ issue.author.original_url }}" target="_blank">Go to profile</a></div>
+                </div>
+            </span>
             submitted on
             <abbr title="{{ issue.created_at.isoformat() }}">{{ local_date(issue.created_at) }}</abbr>
             {% if issue.author_role %}
@@ -29,7 +35,13 @@
     {% for comment in issue.comments() %}
     <div class="card mt-4">
         <div class="card-header text-secondary">
-            <span class="user">{{ comment.author.nickname }}</span>
+            <span class="user">
+                {{ comment.author.nickname }}
+                <div class="popover bs-popover-bottom">
+                    <h3 class="popover-header">{{ comment.author.fullname or comment.author.nickname }}</h3>
+                    <div class="popover-body"><a href="{{ comment.author.original_url }}" target="_blank">Go to profile</a></div>
+                </div>
+            </span>
             commented on
             <abbr title="{{ comment.created_at.isoformat() }}">{{ local_date(comment.created_at) }}</abbr>
             {% if comment.author_role %}
