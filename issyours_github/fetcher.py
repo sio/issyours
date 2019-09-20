@@ -231,7 +231,7 @@ def safe_write(filepath, content, mode='w'):
 def attachment_urls(body, _pattern=re.compile(
             '('
             r'http[s]?://[^/]*githubusercontent.com/[\.\w/&%+-]+'
-            r'|http[s]?://github.com/\w+/\w+/files/[\.\w/&%+-]+'
+            r'|http[s]?://github.com/[^\s/]+/[^\s/]+/files/[\.\w/&%+-]+'
             ')')):
     '''Detect attachment URLs in the body of GitHub issue/comment'''
     # URL regex from http://urlregex.com/
