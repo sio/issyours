@@ -12,12 +12,12 @@ img {
     position: relative;
 }
 .user .popover {
-    visibility: hidden;
+    display: none;
     top: .7rem;
 }
 .user:hover .popover,
 .user .popover:hover {
-    visibility: visible;
+    display: block;
 }
 .user .popover-header {
     white-space: nowrap;

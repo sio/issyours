@@ -39,7 +39,7 @@ ISSYOURS_SOURCES = {
     GitHubReader: {
         'init': {
             'repo': r'MichaelMure/git-bug',
-            'directory': r'J:\_issyours_archives\git-bug',
+            'directory': r'../../_issyours_archives/git-bug',
         },
         'prefix': 'GH',
     },
