@@ -1,9 +1,18 @@
+.user {
+    position: relative;
+}
 .user .popover {
-    display: none;
-    top: 1.5rem;
-    left: 2rem;
+    visibility: hidden;
+    top: .7rem;
+    left: .7rem;
 }
 .user:hover .popover,
 .user .popover:hover {
-    display: block
+    visibility: visible;
+}
+.user .popover-header {
+    white-space: nowrap;
+}
+.user .popover-body a {
+    white-space: nowrap;
 }

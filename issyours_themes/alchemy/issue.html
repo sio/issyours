@@ -15,7 +15,7 @@
 {% endmacro %}
 
 {% macro show_card(data, type) %}
-    <div class="card mt-4">
+    <div class="card mb-3">
         <div class="card-header text-secondary">
             {{ show_user(data.author) }}
             {{ 'submitted on' if type == 'issue' else 'commented on' }}
@@ -94,7 +94,7 @@
 {% endblock %}
 
 {% block content %}
-<section class="badges lead">
+<section class="badges lead mb-4">
     <span class="badge text-uppercase badge-{{ 'danger' if issue.closed_at else 'success' }}">{{ issue.status }}</span>
     {% for label in issue.labels %}
         {{ show_label(label) }}
