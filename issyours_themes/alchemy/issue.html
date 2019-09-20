@@ -24,12 +24,13 @@
     <abbr title="{{ dtime.isoformat() }}">{{ local_date(dtime) }}</abbr>
 {% endmacro %}
 
-{% macro show_card(data, type) %}
+{% macro show_card(issue, comment) %}
+    {% set data = comment or issue %}
     <div class="{{ type }} card mb-3">
         <div class="card-header text-secondary">
             {{ avatar(data.author) }}
             {{ show_user(data.author) }}
-            {{ 'submitted on' if type == 'issue' else 'commented on' }}
+            {{ 'commented on' if comment else 'submitted on' }}
             {{ show_date(data.created_at) }}
             <span class="badge px-0 mt-1 float-right font-weight-light">
             <a class="float-right text-secondary" href="#{{ data.created_at.timestamp() }}" name="{{ data.created_at.timestamp() }}">#</a>
@@ -39,6 +40,14 @@
             {% endif %}
         </div>
         <div class="card-body">{{ data.body }}</div>
+        {% if data.attachments()|first %}
+        <div class="card-footer text-secondary small">
+            Attachments:
+            {% for attach in data.attachments() %}
+                <a href="{{ SITEURL + '/' + attachment_url(attach, issue) }}" target="_blank">{{ attach.name }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 {% endmacro %}
 
@@ -115,10 +124,10 @@
     {% endfor %}
 </section>
 <section id="content" class="body">
-    {{ show_card(issue, 'issue') }}
+    {{ show_card(issue) }}
     {% for item, kind in issue.feed() %}
         {% if kind == 'comment' %}
-            {{ show_card(item, kind) }}
+            {{ show_card(issue, item) }}
         {% else %}
             {{ show_event(item) }}
         {% endif %}

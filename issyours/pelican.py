@@ -6,6 +6,7 @@ Pelican plugin for rendering issues archive on static website
 import logging
 import os
 import re
+from itertools import chain
 from pkg_resources import resource_string
 from shutil import copyfileobj
 from types import SimpleNamespace
@@ -77,6 +78,10 @@ class IssueGenerator(Generator):
             'ISSYOURS_LIST_SAVE_AS',
             self.index_url if self.index_url.endswith('.html') else self.index_url + '/index.html'
         )
+        self.attach_pattern = self.settings.get(
+            'ISSYOURS_ATTACHMENT_SAVE_AS',
+            'attachments/{issue}/{name}'
+        )
 
 
     def generate_output(self, writer):
@@ -96,6 +101,9 @@ class IssueGenerator(Generator):
                     return None
                 return avatar_pattern.format(slug=person.nickname, prefix=prefix)
 
+            def attachment_url(attachment, issue):
+                return self.attach_pattern.format(issue=issue.slug, name=attachment.name)
+
             issue_uids = list(reader.issue_uids())
             context = self.context.copy()
             context['get_issue'] = get_issue
@@ -112,6 +120,7 @@ class IssueGenerator(Generator):
                 context = self.context.copy()
                 context['issue'] = issue = get_issue(uid)
                 context['avatar_url'] = avatar_url
+                context['attachment_url'] = attachment_url
                 writer.write_file(
                     name=issue.save_as,
                     template=self.issue_template,
@@ -119,6 +128,14 @@ class IssueGenerator(Generator):
                     relative_urls=self.settings['RELATIVE_URLS'],
                     url=issue.url,
                 )
+                comment_attachments = (a for c in issue.comments() for a in c.attachments())
+                for attach in chain(issue.attachments(), comment_attachments):
+                    attach_filename = os.path.join(writer.output_path, attachment_url(attach, issue))
+                    os.makedirs(os.path.dirname(attach_filename), exist_ok=True)
+                    with open(attach_filename, 'wb') as attachment:
+                        copyfileobj(attach.stream, attachment)
+                        log.debug('Written attachment for issue %s: %s', issue.slug, attach_filename)
+
 
             if not avatar_pattern:
                 continue
