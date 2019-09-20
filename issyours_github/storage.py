@@ -90,7 +90,7 @@ class GitHubFileStorage:
 
     def patch_path(self, issue):
         '''Path to patch file'''
-        return os.path.join(self.issue_dir(issue), 'attached.patch')
+        return os.path.join(self.issue_dir(issue), 'proposed.patch')
 
 
     def _stamp_path(self, issue_no=None):
