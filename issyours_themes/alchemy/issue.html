@@ -1,11 +1,21 @@
 {% extends "base.html" %}
 
+{% macro avatar(person) %}
+    {% if person.picture %}
+    <img class="avatar rounded img-fluid" src="{{ SITEURL + '/' + avatar_url(person) }}"/>
+    {% endif %}
+{% endmacro %}
+
 {% macro show_user(person) %}
     <span class="user">
         <strong>{{ person.nickname }}</strong>
         <div class="popover bs-popover-bottom">
-            <h3 class="popover-header">{{ person.fullname or person.nickname }}</h3>
-            <div class="popover-body"><a href="{{ person.original_url }}" target="_blank">Go to profile</a></div>
+            <h3 class="popover-header">
+                <a href="{{ person.original_url }}" target="_blank">{{ person.fullname or person.nickname }}</a>
+            </h3>
+            <div class="popover-body">
+                {{ avatar(person) }}
+            </div>
         </div>
     </span>
 {% endmacro %}
@@ -15,8 +25,9 @@
 {% endmacro %}
 
 {% macro show_card(data, type) %}
-    <div class="card mb-3">
+    <div class="{{ type }} card mb-3">
         <div class="card-header text-secondary">
+            {{ avatar(data.author) }}
             {{ show_user(data.author) }}
             {{ 'submitted on' if type == 'issue' else 'commented on' }}
             {{ show_date(data.created_at) }}

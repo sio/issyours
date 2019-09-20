@@ -58,11 +58,16 @@ class GitHubFileStorage:
         return os.path.join(self.issue_dir(issue), filename)
 
 
+    def person_dir(self):
+        '''Directory where all person entries are stored'''
+        return os.path.join(self.directory, 'people')
+
+
     def person_path(self, nickname=None, person=None):
         '''Path to individual person's JSON file'''
         if not nickname:
             nickname = person['login']
-        return os.path.join(self.directory, 'people', '{}.json'.format(nickname))
+        return os.path.join(self.person_dir(), '{}.json'.format(nickname))
 
 
     def person_image(self, nickname=None, person=None):

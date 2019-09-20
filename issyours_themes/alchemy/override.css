@@ -1,10 +1,11 @@
+/* POPOVERS FOR USERNAMES */
+
 .user {
     position: relative;
 }
 .user .popover {
     visibility: hidden;
     top: .7rem;
-    left: .7rem;
 }
 .user:hover .popover,
 .user .popover:hover {
@@ -15,4 +16,15 @@
 }
 .user .popover-body a {
     white-space: nowrap;
+}
+
+
+/* USER AVATARS */
+
+.card-header > .avatar {
+    width: 1.5rem;
+    margin-top: -0.3rem;
+}
+.popover .avatar {
+    max-width: 7rem;
 }

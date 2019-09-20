@@ -31,6 +31,11 @@ class ReaderBase(ABC):
 
 
     @abstractmethod
+    def person_uids(self):
+        '''Yield unique identificators for all persons contained in Storage'''
+
+
+    @abstractmethod
     def _read_issue(self, uid):
         '''Return a single Issue object from Storage'''
 
@@ -64,6 +69,14 @@ class ReaderBase(ABC):
         return lazy_method(cache=self._issues_cache,
                            method=self._read_issue,
                            key=uid)
+
+
+    def persons(self):
+        '''
+        Yield Person objects in arbitrary order
+        '''
+        for uid in self.person_uids():
+            yield self.person(uid)
 
 
     def person(self, login):

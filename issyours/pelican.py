@@ -4,8 +4,10 @@ Pelican plugin for rendering issues archive on static website
 
 
 import logging
+import os
 import re
 from pkg_resources import resource_string
+from shutil import copyfileobj
 from types import SimpleNamespace
 
 from pelican import signals
@@ -52,6 +54,9 @@ class IssueGenerator(Generator):
         self.issue_template = self.get_template('issue')
         self.index_template = self.get_template('issues')
 
+        if self.settings.get('ISSYOURS_AVATAR_SAVE_AS') is None:  # None for default value, '' to disable avatars
+            self.settings['ISSYOURS_AVATAR_SAVE_AS'] = 'issues/avatars/{prefix}/{slug}'
+
         pagination = self.settings['PAGINATED_TEMPLATES']
         if 'issues' not in pagination:
             pagination['issues'] = None  # Use default number of items per page
@@ -85,6 +90,12 @@ class IssueGenerator(Generator):
                     dest_pattern=self.dest_pattern,
                 )
 
+            avatar_pattern = self.settings['ISSYOURS_AVATAR_SAVE_AS']
+            def avatar_url(person):
+                if not person.picture:
+                    return None
+                return avatar_pattern.format(slug=person.nickname, prefix=prefix)
+
             issue_uids = list(reader.issue_uids())
             context = self.context.copy()
             context['get_issue'] = get_issue
@@ -100,6 +111,7 @@ class IssueGenerator(Generator):
             for uid in issue_uids:
                 context = self.context.copy()
                 context['issue'] = issue = get_issue(uid)
+                context['avatar_url'] = avatar_url
                 writer.write_file(
                     name=issue.save_as,
                     template=self.issue_template,
@@ -107,6 +119,17 @@ class IssueGenerator(Generator):
                     relative_urls=self.settings['RELATIVE_URLS'],
                     url=issue.url,
                 )
+
+            if not avatar_pattern:
+                continue
+            for person in reader.persons():
+                if not person.picture:
+                    continue
+                avatar_path = os.path.join(writer.output_path, avatar_url(person))
+                os.makedirs(os.path.dirname(avatar_path), exist_ok=True)
+                with open(avatar_path, 'wb') as avatar:
+                    copyfileobj(person.picture, avatar)
+                    log.debug('Written user picture for %s: %s', person.nickname, avatar_path)
 
 
 

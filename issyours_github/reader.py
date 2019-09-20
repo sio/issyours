@@ -88,6 +88,11 @@ class GitHubReader(ReaderBase):
             ))
 
 
+    def person_uids(self):
+        for filename in glob(os.path.join(self.storage.person_dir(), '*.json')):
+            yield os.path.splitext(os.path.basename(filename))[0]
+
+
     def _fetched_at(self, issue_no):
         '''Read modification time from filesystem'''
         stamp = self.storage._stamp_path(issue_no)
