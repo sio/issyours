@@ -31,6 +31,9 @@
             {{ show_user(data.author) }}
             {{ 'submitted on' if type == 'issue' else 'commented on' }}
             {{ show_date(data.created_at) }}
+            <span class="badge px-0 mt-1 float-right font-weight-light">
+            <a class="float-right text-secondary" href="#{{ data.created_at.timestamp() }}" name="{{ data.created_at.timestamp() }}">#</a>
+            </span>
             {% if data.author_role %}
             <span class="badge mt-1 float-right font-weight-normal">{{ data.author_role }}</span>
             {% endif %}
