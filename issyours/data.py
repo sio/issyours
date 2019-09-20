@@ -3,6 +3,7 @@ Data classes to be used across Issyours project
 '''
 
 
+import logging
 import re
 from datetime import datetime
 
@@ -10,6 +11,8 @@ import attr
 from attr.validators import instance_of, optional
 
 from issyours.reader import ReaderBase
+
+log = logging.getLogger(__name__)
 
 
 
@@ -144,6 +147,27 @@ class IssueEvent:
     type        = attr.ib()
     data        = attr.ib()
     created_at  = attr.ib(default=None, validator=optional(instance_of(datetime)))
+
+    _known_events = {
+        'assigned',
+        'closed',
+        'demilestoned',
+        'head_ref_force_pushed',
+        'labeled',
+        'merged',
+        'milestoned',
+        'ready_for_review',
+        'referenced',
+        'renamed',
+        'reopened',
+        'review_requested',
+        'unlabeled',
+    }
+
+    @type.validator
+    def _check_known_event(self, attribute, value):
+        if value not in self._known_events:
+            log.warning('Unknown event type: {}. This will likely be rendered poorly'.format(value))
 
 
 

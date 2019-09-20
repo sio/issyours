@@ -141,48 +141,59 @@ class GitHubReader(ReaderBase):
         for filename in sorted(glob(os.path.join(directory, pattern)), reverse=desc):
             with open(filename, encoding=self.storage.ENCODING) as f:
                 data = json.load(f)
-            if data['event'] in {'mentioned',}:
+            event_type = data['event']
+            if event_type not in IssueEvent._known_events:
                 continue
-            author_data = data['actor']
+            if event_type == 'assigned':
+                author_data = data['assigner']
+            else:
+                author_data = data['actor']
             author_uid = author_data.get('login') if author_data else None
             yield IssueEvent(
                 issue=issue,
                 author=self.person(author_uid) if author_uid else None,
-                type=data['event'],
-                data=extract_event_data(data),  # TODO: review usefullness of individual fields
+                type=event_type,
+                data=self._extract_event_data(data),  # TODO: review usefullness of individual fields
                 created_at=GitHubTimestamp(isotime=data['created_at']).datetime,
             )
 
 
 
-def extract_event_data(data):
-    '''Transform GitHub event data into issyours event data'''
-    good_keys = {
-        # key: further nested path
-        'assigner': ('login'),
-        'commit_id': (),
-        'dismissed_review': ('dismissal_message'),
-        'lock_reason': (),
-        'milestone': (),
-        'rename': (),
-        'requester': (),
-    }
-    result = dict()
-    for key, value in data.items():
-        if not value:
-            continue
-        if key in good_keys:
-            result[key] = _nested_dict_lookup(value, *good_keys[key])
-        elif key in {'assignees', 'requested_reviewers'}:
-            result[key] = [u['login'] for u in value]
-        elif key in {'label', 'labels'}:
-            if not 'labels' in result:
-                labels = result['labels'] = []
-            if isinstance(value, Mapping):
-                value = [value,]
-            for l in value:
-                labels.append(IssueLabel(l['name'], '#' + l['color']))
-    return result
+    def _extract_event_data(self, data):
+        '''Transform GitHub event data into issyours event data'''
+        good_keys = {
+            # key: further nested path
+            'assignee': ('login',),
+            'commit_id': (),
+            'dismissed_review': ('dismissal_message',),
+            'lock_reason': (),
+            'milestone': (),
+            'rename': (),
+            'requester': (),
+            'commit_id': (),
+        }
+        result = dict()
+        for key, value in data.items():
+            if not value:
+                continue
+            if key in good_keys:
+                result[key] = _nested_dict_lookup(value, *good_keys[key])
+            elif key in {'assignees', 'requested_reviewers'}:
+                result[key] = [u['login'] for u in value]
+            elif key in {'label', 'labels'}:
+                if not 'labels' in result:
+                    labels = result['labels'] = []
+                if isinstance(value, Mapping):
+                    value = [value,]
+                for l in value:
+                    labels.append(IssueLabel(l['name'], '#' + l['color']))
+        if 'assignee' in result:
+            result['assignees'] = set(result.get('assignees', []) + [result['assignee']])
+            result.pop('assignee')
+        if 'assignees' in result:
+            logins = result['assignees']
+            result['assignees'] = [self.person(x) for x in logins]
+        return result
 
 
 def _nested_dict_lookup(dictionary, *keys, default=None):

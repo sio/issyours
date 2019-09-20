@@ -2,7 +2,7 @@
 
 {% macro show_user(person) %}
     <span class="user">
-        {{ person.nickname }}
+        <strong>{{ person.nickname }}</strong>
         <div class="popover bs-popover-bottom">
             <h3 class="popover-header">{{ person.fullname or person.nickname }}</h3>
             <div class="popover-body"><a href="{{ person.original_url }}" target="_blank">Go to profile</a></div>
@@ -28,6 +28,64 @@
     </div>
 {% endmacro %}
 
+{% macro show_label(label) %}
+    <span class="badge text-{{ 'white' if label.is_dark else 'black' }}" style="background: {{ label.color }}">{{ label.name }}</span>
+{% endmacro %}
+
+{% macro show_commit(hash) %}
+    <strong title="{{ hash }}">{{ hash|truncate(7, True, '') }}</strong>
+{% endmacro %}
+
+{% macro mention_commit(hash, prefix, suffix) %}
+    {% if hash %}
+    {{ prefix or 'in commit' }}{{ show_commit(hash) }}{{ suffix or '' }}
+    {% endif %}
+{% endmacro %}
+
+{% macro show_event(event) %}
+    <div class="alert text-secondary">
+        {{ show_user(event.author) }}
+        {% if event.type == 'assigned' %}
+            assigned this issue to
+            {% for assignee in event.data['assignees'] %}
+            {{ show_user(assignee) }}
+            {% endfor %}
+        {% elif event.type in ('milestoned', 'demilestoned') %}
+            {{ 'added' if event.type == 'milestoned' else 'removed' }}
+            this issue
+            {{ 'to' if event.type == 'milestoned' else 'from' }}
+            milestone <strong>{{ event.data['milestone']['title'] }}</strong>
+        {% elif event.type in ('labeled', 'unlabeled') %}
+            {{ event.type }}
+            {% for label in event.data['labels'] %}
+            {{ show_label(label) }}
+            {% endfor %}
+        {% elif event.type == 'merged' %}
+            merged proposed changes {{ mention_commit(event.data.get('commit_id')) }}
+        {% elif event.type == 'referenced' %}
+            referenced this issue {{ mention_commit(event.data.get('commit_id')) }}
+        {% elif event.type == 'renamed' %}
+            changed title from
+            <strong>{{event.data['rename']['from']}}</strong>
+            to
+            <strong>{{event.data['rename']['to']}}</strong>
+        {% elif event.type == 'head_ref_force_pushed' %}
+            force pushed to this branch {{ mention_commit(event.data.get('commit_id')) }}
+        {% elif event.type == 'reopened' %}
+            reopened this issue
+        {% elif event.type == 'review_requested' %}
+            requested review
+        {% elif event.type == 'ready_for_review' %}
+            marked this issue as ready for review
+        {% elif event.type == 'closed' %}
+            closed this issue {{ mention_commit(event.data.get('commit_id')) }}
+        {% else %}
+            {{ event.type }} {{ event.data }}
+        {% endif %}
+        on {{ show_date(event.created_at) }}
+    </div>
+{% endmacro %}
+
 {% block title %}{{ issue.title|striptags }} {{ super() }}{% endblock %}
 
 {% block page_header %}
@@ -39,13 +97,17 @@
 <section class="badges lead">
     <span class="badge text-uppercase badge-{{ 'danger' if issue.closed_at else 'success' }}">{{ issue.status }}</span>
     {% for label in issue.labels %}
-    <span class="badge text-{{ 'white' if label.is_dark else 'black' }}" style="background: {{ label.color }}">{{ label.name }}</span>
+        {{ show_label(label) }}
     {% endfor %}
 </section>
 <section id="content" class="body">
     {{ show_card(issue, 'issue') }}
-    {% for comment in issue.comments() %}
-    {{ show_card(comment, 'comment') }}
+    {% for item, kind in issue.feed() %}
+        {% if kind == 'comment' %}
+            {{ show_card(item, kind) }}
+        {% else %}
+            {{ show_event(item) }}
+        {% endif %}
     {% endfor %}
 </section>
 {% endblock %}
