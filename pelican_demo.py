@@ -12,12 +12,11 @@ LOCALE = 'en_US.UTF-8'
 DEFAULT_LANG = 'en'
 
 THEME = '../pelican-alchemy/alchemy'
+BOOTSTRAP_CSS = 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/yeti/bootstrap.min.css'
 THEME_TEMPLATES_OVERRIDES = ['issyours_themes/alchemy']
 THEME_CSS_OVERRIDES = ['theme/css/override.css']
-BOOTSTRAP_CSS = 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/yeti/bootstrap.min.css'
-STATIC_PATHS = ['../issyours_themes/alchemy/override.css']
-EXTRA_PATH_METADATA = {
-    '../issyours_themes/alchemy/override.css': {'path': 'theme/css/override.css'}
+TEMPLATE_PAGES = {
+    'override.css.html': 'theme/css/override.css',
 }
 
 
