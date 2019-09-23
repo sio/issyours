@@ -17,9 +17,6 @@
 - [ ] Internal hyperlinks in Renderer (with other Pelican pages)
 - [ ] URL rewrite rules
 - [ ] Multi-prefix common index for issues (based on date?)
-- [ ] Custom nice theme
-    - [ ] Issue page
-        - [ ] Syntax highlighting
 - [ ] README for the project
 - [ ] Explain licensing: Pelican is a dependency, Matomo is inspiration
 - [ ] Bump versions before publishing (fetcher format, Python package, user

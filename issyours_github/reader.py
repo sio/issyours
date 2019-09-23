@@ -257,11 +257,11 @@ def make_filename(url, filepath):
 
 
 MARKDOWN_CONFIG={
-    'extensions': [x.makeExtension() for x in [
-        fenced_code,
-        codehilite,
-        nl2br,
-    ]],
+    'extensions': [
+        'markdown.extensions.fenced_code',
+        'markdown.extensions.codehilite',
+        'markdown.extensions.nl2br',
+    ],
     'extension_configs': {
         'markdown.extensions.codehilite': {
             'css_class': 'highlight',
