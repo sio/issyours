@@ -7,7 +7,7 @@ import issyours.pelican
 PLUGINS = [issyours.pelican]
 
 RELATIVE_URLS = True
-DEFAULT_PAGINATION = 15
+DEFAULT_PAGINATION = 36
 LOCALE = 'en_US.UTF-8'
 DEFAULT_LANG = 'en'
 

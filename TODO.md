@@ -18,7 +18,6 @@
 - [ ] URL rewrite rules
 - [ ] Multi-prefix common index for issues (based on date?)
 - [ ] Custom nice theme
-    - [ ] Issue index page
     - [ ] Issue page
         - [ ] Syntax highlighting
 - [ ] README for the project

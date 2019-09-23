@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "macros.html" import show_date, show_label with context %}
+
+{% macro show_preview(issue) %}
+    <div class="col-lg-3 col-md-4 issue-preview">
+        <a class="card" href="{{ SITEURL }}/{{ issue.url }}">
+            <div class="card-body">
+                <h4 class="card-title">{{ issue.title }} <small>#{{ issue.slug }}</small></h4>
+                <small>
+                    opened by @{{ issue.author.nickname }} on {{ show_date(issue.created_at) }}
+                    <div class="labels">
+                    {% for label in issue.labels %}
+                        {{ show_label(label) }}
+                    {% endfor %}
+                    </div>
+                </small>
+            </div>
+        </a>
+    </div>
+{% endmacro %}
+
+{% block title %}
+Issues ({{ issues_page.number }}/{{ issues_paginator.num_pages }})
+{{ super() }}
+{% endblock %}
+
+{% block page_header %}
+Browse issues
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        {% for uid in issues_page.object_list %}
+            {{ show_preview(get_issue(uid)) }}
+        {% endfor %}
+    </div>
+    {% set articles_page = issues_page %}
+    {% set articles_paginator = issues_paginator %}
+    {% set articles_next_page = issues_next_page %}
+    {% set articles_previous_page = issues_previous_page %}
+    {% include "include/pagination.html" %}
+{% endblock %}
