@@ -1,3 +1,7 @@
+'''
+GitHub issues archive stored in JSON files
+'''
+
 import issyours
 from issyours_github.api import GitHubTimestamp
 from issyours_github.fetcher import GitHubFetcher
