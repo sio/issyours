@@ -36,6 +36,8 @@ class GitHubReader(ReaderBase):
     '''
 
     def __init__(self, repo, directory):
+        if not os.path.isdir(directory):
+            raise ValueError('not a directory: {}'.format(directory))
         super().__init__()
         self.storage = GitHubFileStorage(repo, directory)
 
