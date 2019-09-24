@@ -74,25 +74,33 @@ class GitHubFetcher(GitHubFileStorage):
                 users.add(assignee['login'])
             if issue['closed_by']:
                 users.add(issue['closed_by']['login'])
-            self.fetch_persons(nicknames=users, since=since)
+            self.fetch_persons(nicknames=users)
 
             self.write_stamp(issue)
         self.write_stamp()
 
 
-    def fetch_persons(self, nicknames, since=None):
+    def fetch_persons(self, nicknames):
         '''Fetch data about GitHub user. Execute only once for each nickname seen'''
         for nickname in nicknames:
             if not nickname or nickname in self._persons_seen:
                 continue
             self._persons_seen.add(nickname)
+
+            person_file = self.person_path(nickname=nickname)
+            if not os.path.exists(person_file):
+                timestamp = None
+            else:
+                with open(person_file, encoding=self.ENCODING) as f:
+                    data = json.load(f)
+                timestamp = GitHubTimestamp(isotime=data['updated_at']).datetime
             try:
-                person = self.api.person(nickname, since)
-                person_file = self.person_path(person=person)
+                person = self.api.person(nickname, timestamp)
                 write_json(person, person_file)
                 log.info('Saved user @%s', person['login'])
             except GitHubNotModifiedException:
                 continue
+
             try:
                 image_file = self.person_image(person=person)
                 download(person['avatar_url'], image_file)
