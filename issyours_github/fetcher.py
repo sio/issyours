@@ -250,7 +250,7 @@ def attachment_urls(body, _pattern=re.compile(
         yield from ()
 
 
-def download(url, dest):
+def download(url, dest):  # TODO: do not store the whole file in memory
     '''Download regular files from web'''
     response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
