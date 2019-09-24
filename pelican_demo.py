@@ -44,4 +44,10 @@ ISSYOURS_SOURCES = {
     },
 }
 ISSYOURS_REWRITE_URLS = {
+    None: {  # Global rewrite rules
+    },
+    'GH': {  # For this prefix only
+        r'http[s]?://github.com/golang/([^>]+)': r'golang/\1',
+        r'http[s]?://git-scm.com/([^>]+)': r'git://\1',
+    },
 }

@@ -41,7 +41,7 @@ class IssueGenerator(Generator):
 
 
     def generate_context(self):
-        self.rewrite_rules = self.settings['ISSYOURS_REWRITE_URLS']  # TODO
+        self.url_rewriter = URLRewriter(self.settings)
 
         date_format = self.settings['DEFAULT_DATE_FORMAT']  # TODO: multiple languages?
         self.context['local_date'] = lambda dt: dt.strftime(date_format)
@@ -93,6 +93,7 @@ class IssueGenerator(Generator):
                     prefix=prefix,
                     url_pattern=self.url_pattern,
                     dest_pattern=self.dest_pattern,
+                    rewriter=self.url_rewriter,
                 )
 
             avatar_pattern = self.settings['ISSYOURS_AVATAR_SAVE_AS']
@@ -154,17 +155,36 @@ class IssueWrapper:
     '''Helper class that adds some methods to any given issue object'''
 
 
-    def __init__(self, issue, prefix, url_pattern, dest_pattern):
+    def __init__(self, issue, prefix, url_pattern, dest_pattern, rewriter):
         self._issue = SimpleNamespace(
             ref=issue,
             prefix=prefix,
             url_pattern=url_pattern,
             dest_pattern=dest_pattern,
+            rewriter=rewriter,
         )
 
 
     def __getattr__(self, attr):
         return getattr(self._issue.ref, attr)
+
+
+    @property
+    def body(self):
+        return self._issue.rewriter.rewrite(self._issue.ref.body, self._issue.prefix)
+
+
+    def comments(self):
+        for comment in self._issue.ref.comments():
+            yield CommentWrapper(comment, self._issue.prefix, self._issue.rewriter)
+
+
+    def feed(self):
+        for item, kind in self._issue.ref.feed():
+            if kind == 'comment':
+                yield CommentWrapper(item, self._issue.prefix, self._issue.rewriter), kind
+            else:
+                yield item, kind
 
 
     @property
@@ -198,6 +218,84 @@ class IssueWrapper:
             slug=self.slug,
         )
 
+
+
+class CommentWrapper:
+    '''Helper class that adds some methods to any given comment object'''
+
+
+    def __init__(self, comment, prefix, rewriter):
+        self._comment = SimpleNamespace(
+            ref=comment,
+            prefix=prefix,
+            rewriter=rewriter,
+        )
+
+
+    def __getattr__(self, attr):
+        return getattr(self._comment.ref, attr)
+
+
+    @property
+    def body(self):
+        return self._comment.rewriter.rewrite(self._comment.ref.body, self._comment.prefix)
+
+
+
+class URLRewriter:
+    '''
+    Handle custom URL rewrites in issue body and in comments
+    '''
+
+    HREF = r'(?P<_prefix><[^>]+href=\s*"\s*){}(?P<_postfix>\s*"[^>]*>)'
+    SUB  = r'\g<_prefix>{}\g<_postfix>'
+
+    def __init__(self, settings):
+        config = settings.get('ISSYOURS_REWRITE_URLS', {})
+        self.rules = {}
+        for prefix, rules in config.items():
+            self.rules[prefix] = self._compile(rules)
+
+
+    def _compile(self, rules):
+        compiled = {}
+        for regex, substitution in rules.items():
+            regex = re.compile(self.HREF.format(regex))
+            subst = self.SUB.format(_increment_backrefs(substitution))
+            compiled[regex] = subst
+        return compiled
+
+
+    def rewrite(self, html_string, reader_prefix):
+        '''Apply rewrite rules to HTML string'''
+        output = html_string
+        for prefix in (None, reader_prefix):
+            for regex, substitution in self.rules.get(prefix, {}).items():
+                output = regex.sub(substitution, output)
+        return output
+
+
+
+def _increment_backrefs(pattern, increment=1):
+    '''Increment all backreferences by a number'''
+    BACKSLASH = '\\'
+    EMPTY = ''
+    output = []
+    number = EMPTY
+    previous = EMPTY
+    for char in chain(pattern, [EMPTY]):
+        if previous == BACKSLASH and char in '0123456789':
+            number += char
+        else:
+            if number:
+                output.append(str(int(number) + increment))
+                number = EMPTY
+            output.append(char)
+        if previous == BACKSLASH and char == BACKSLASH:
+            previous = EMPTY
+        else:
+            previous = char
+    return ''.join(output)
 
 
 def _pattern(pattern, __double_slash=re.compile('//*'), **kw):
