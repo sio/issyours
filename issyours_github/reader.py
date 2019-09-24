@@ -6,6 +6,7 @@ Read GitHub issues from JSON files on local filesystem
 import json
 import logging
 import os
+import re
 from glob import glob
 from typing import Mapping
 from urllib.parse import urlparse
@@ -274,6 +275,8 @@ MARKDOWN_CONFIG={
     },
     'output_format': 'html5',
 }
+_plain_url = re.compile(r'(^\s*|[^(:]\s*)(http[s]://\S+)')
 def render_markdown(text):
     '''Render markdown as HTML following GitHub conventions'''
+    text = _plain_url.sub(r'\1<\2>', text)
     return markdown(text, **MARKDOWN_CONFIG)
