@@ -22,3 +22,6 @@
       agent)
 - [ ] Test on a large dataset
 - [ ] Profile memory and CPU usage
+
+> References in parentheses contain repo and issue number where the feature is
+> in use. MichaelMure/git-bug is used as default test dataset
