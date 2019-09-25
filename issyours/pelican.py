@@ -47,10 +47,12 @@ class IssueGenerator(Generator):
         self.context['local_date'] = lambda dt: dt.strftime(date_format)
 
         self.issue_readers = {}
-        for cls, kwargs in self.settings['ISSYOURS_SOURCES'].items():
-            issue_reader = cls(**kwargs.get('init', {}))
-            prefix = kwargs.get('prefix', '')
-            self.issue_readers[prefix] = issue_reader
+        for reader, extras in self.settings['ISSYOURS_SOURCES'].items():
+            extras = extras or {}
+            prefix = extras.get('prefix', '')
+            if prefix in self.issue_readers:
+                raise ValueError('non-unique prefix in ISSYOURS_SOURCES: {!r}'.format(prefix))
+            self.issue_readers[prefix] = reader
 
         self.issue_template = self.get_template('issue')
         self.index_template = self.get_template('issues')

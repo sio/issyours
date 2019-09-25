@@ -35,11 +35,7 @@ from issyours_github import GitHubReader
 #ISSYOURS_LIST_URL = 'issues/'
 #ISSYOURS_LIST_SAVE_AS = 'issues/index.html'
 ISSYOURS_SOURCES = {
-    GitHubReader: {
-        'init': {
-            'repo': r'MichaelMure/git-bug',
-            'directory': r'../../_issyours_archives/git-bug',
-        },
+    GitHubReader(repo='MichaelMure/git-bug', directory=r'../../_issyours_archives/git-bug'): {
         'prefix': 'GH',
     },
 }
