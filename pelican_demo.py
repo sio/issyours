@@ -24,16 +24,14 @@ TEMPLATE_PAGES = {
 # Issyours plugin configuration
 #
 
-# TODO: check that all variables provide sensible defaults or fail loudly when unset
-
 
 from issyours_github import GitHubReader
 
 
 #ISSYOURS_ISSUE_URL = 'issue/{slug}/'
 #ISSYOURS_ISSUE_SAVE_AS = 'issue/{slug}/index.html'
-#ISSYOURS_LIST_URL = 'issues/'
-#ISSYOURS_LIST_SAVE_AS = 'issues/index.html'
+#ISSYOURS_INDEX_URL = 'issues/'
+#ISSYOURS_INDEX_SAVE_AS = 'issues/index.html'
 ISSYOURS_SOURCES = {
     GitHubReader(repo='MichaelMure/git-bug', directory=r'../../_issyours_archives/git-bug'): {
         'prefix': 'GH',

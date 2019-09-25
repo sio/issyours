@@ -47,6 +47,8 @@ class IssueGenerator(Generator):
         self.context['local_date'] = lambda dt: dt.strftime(date_format)
 
         self.issue_readers = {}
+        if 'ISSYOURS_SOURCES' not in self.settings:
+            raise ValueError('required Pelican settings not found: ISSYOURS_SOURCES')
         for reader, extras in self.settings['ISSYOURS_SOURCES'].items():
             extras = extras or {}
             prefix = extras.get('prefix', '')
@@ -73,11 +75,11 @@ class IssueGenerator(Generator):
             self.url_pattern if self.url_pattern.endswith('.html') else self.url_pattern + '/index.html'
         )
         self.index_url = self.settings.get(
-            'ISSYOURS_LIST_URL',
+            'ISSYOURS_INDEX_URL',
             'issues/{prefix}/index.html'
         )
         self.index_dest = self.settings.get(
-            'ISSYOURS_LIST_SAVE_AS',
+            'ISSYOURS_INDEX_SAVE_AS',
             self.index_url if self.index_url.endswith('.html') else self.index_url + '/index.html'
         )
         self.attach_pattern = self.settings.get(
