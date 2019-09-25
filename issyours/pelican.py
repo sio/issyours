@@ -279,22 +279,26 @@ class URLRewriter:
 def _increment_backrefs(pattern, increment=1):
     '''Increment all backreferences by a number'''
     BACKSLASH = '\\'
+    NUMBER = 'number'
     EMPTY = ''
+    DIGITS = set('0123456789')
     output = []
     number = EMPTY
     previous = EMPTY
     for char in chain(pattern, [EMPTY]):
-        if previous == BACKSLASH and char in '0123456789':
+        if char in DIGITS \
+        and (previous == BACKSLASH or previous == NUMBER):
             number += char
+            previous = NUMBER
         else:
             if number:
                 output.append(str(int(number) + increment))
                 number = EMPTY
             output.append(char)
-        if previous == BACKSLASH and char == BACKSLASH:
-            previous = EMPTY
-        else:
-            previous = char
+            if previous == BACKSLASH and char == BACKSLASH:
+                previous = EMPTY
+            else:
+                previous = char
     return ''.join(output)
 
 

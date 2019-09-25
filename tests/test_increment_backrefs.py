@@ -8,6 +8,8 @@ class BackrefsTest(TestCase):
         # before, after, increment
         (r'hello \1 \2 \\3 world', r'hello \2 \3 \\3 world', 1),
         (r'hello \1 \2 \\3 world', r'hello \11 \12 \\3 world', 10),
+        (r'hello \10 \20 \\30 world', r'hello \24 \34 \\30 world', 14),
+        (r'hello 10 2 300 \world', r'hello 10 2 300 \world', 14),
         (r'\1 \2 \\3 world', r'\11 \12 \\3 world', 10),
         (r'hello \1 \2', r'hello \2 \3', 1),
     )
