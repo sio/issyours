@@ -39,7 +39,11 @@ pages:
         mkdocs-material
         pygments
     - mkdocs build
-    - git clone --depth 1 "https://github.com/nairobilug/pelican-alchemy.git" || true
+    - git clone --depth 1 "https://github.com/nairobilug/pelican-alchemy.git"
+      || (
+        git -C "$DEMO_THEME" fetch --depth 1 &&
+        git -C "$DEMO_THEME" reset --hard origin/master
+      )
     - make demo
   artifacts:
     paths:
