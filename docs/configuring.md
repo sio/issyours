@@ -2,7 +2,7 @@
 
 ## Global configuration
 
-###### ISSYOURS_DEBUG
+##### ISSYOURS_DEBUG
 
 Setting this environment variable to any value enables more verbose output
 across all Issyours components.
@@ -17,7 +17,7 @@ See [sample](../pelican_demo.py).
 
 ### Data sources (required)
 
-###### ISSYOURS_SOURCES
+##### ISSYOURS_SOURCES
 
 A dictionary where keys are *Reader* instances and values are either
 `None` or dictionaries providing extra metadata for *Reader*. Currently
@@ -43,7 +43,7 @@ formatting](https://docs.python.org/3/library/stdtypes.html#str.format)
 (see: `help(str.format)`)
 
 
-###### ISSYOURS_ATTACHMENT_SAVE_AS
+##### ISSYOURS_ATTACHMENT_SAVE_AS
 
 The path to save issue attachments to.
 
@@ -54,7 +54,7 @@ Available substitutions:
 - `{issue}` - issue slug (usually prefix+uid)
 - `{name}` - attachment filename provided by *Reader*
 
-###### ISSYOURS_AVATAR_SAVE_AS
+##### ISSYOURS_AVATAR_SAVE_AS
 
 The path to save person's profile pictures to.
 
@@ -65,7 +65,7 @@ Available substitutions:
 - `{slug}` - unique person's identifier (usually, login or nickname)
 - `{prefix}` - prefix assigned to the *Reader* in Pelican config
 
-###### ISSYOURS_ISSUE_URL
+##### ISSYOURS_ISSUE_URL
 
 The URL to refer to specific issue by.
 
@@ -78,7 +78,7 @@ Available substitutions:
 - `{prefix}` - prefix assigned to the *Reader* in Pelican config
 - `{uid}` - issue identifier that is unique only within its parent *Reader*
 
-###### ISSYOURS_ISSUE_SAVE_AS
+##### ISSYOURS_ISSUE_SAVE_AS
 
 The path to save issue page to.
 
@@ -91,7 +91,7 @@ Available substitutions:
 - `{prefix}` - prefix assigned to the *Reader* in Pelican config
 - `{uid}` - issue identifier that is unique only within its parent *Reader*
 
-###### ISSYOURS_INDEX_URL
+##### ISSYOURS_INDEX_URL
 
 Base URL for issue index pages. Honors [PAGINATION_PATTERNS] from Pelican config.
 
@@ -101,7 +101,7 @@ Available substitutions:
 
 - `{prefix}` - prefix assigned to the *Reader* in Pelican config
 
-###### ISSYOURS_INDEX_SAVE_AS
+##### ISSYOURS_INDEX_SAVE_AS
 
 The path to save index pages to. Honors [PAGINATION_PATTERNS] from Pelican config.
 
@@ -116,7 +116,7 @@ Available substitutions:
 
 ### URL rewrite rules (optional)
 
-###### ISSYOURS_REWRITE_URLS
+##### ISSYOURS_REWRITE_URLS
 
 Regex substitution rules for URL targets in issue and comment body. Applied
 in *Renderer* during generation of the static website. Large number of rules

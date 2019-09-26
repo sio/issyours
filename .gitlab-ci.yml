@@ -17,8 +17,14 @@ pages:
   script:
     - apk add rsync
     - mkdir mkdocs_source
-    - rsync -Rr . mkdocs_source
-    - pip install mkdocs mkdocs-material pygments
+    - rsync
+        -Rr . mkdocs_source
+        --exclude venv
+        --exclude pip-cache
+    - pip install
+        mkdocs
+        mkdocs-material
+        pygments
     - mkdocs build
   artifacts:
     paths:

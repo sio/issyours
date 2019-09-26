@@ -1,5 +1,5 @@
 #site_url: https://issyours.ml
-site_name: issyours
+site_name: Issyours
 site_description: Read-only archive for any issue tracker
 site_author: Vitaly Potyarkin
 site_dir: public
@@ -9,6 +9,7 @@ repo_name: sio / issyours
 edit_uri: ''
 
 nav:
+  - Overview: README.md
   - Quickstart:
     - Demo: docs/demo.md
     - Getting started: docs/quickstart.md

@@ -51,6 +51,7 @@ $ make serve
 ## Customizing demo build
 
 Use these environment variables to alter the behavior of demo build:
+
 - `DEMO_REPO` *(default: sio/bash-complete-partial-path)* -
   the repo to mirror issues and pull requests from
 - `DEMO_STORAGE` *(default: demo-github-data)* -
