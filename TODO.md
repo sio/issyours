@@ -1,10 +1,10 @@
 # TODO list for Issyours
 
 - GitHubFetcher improvements
-    - When issue is referenced from another issue or pull request, it is
-          not visible in its API response, therefore not rendered by us (git-bug#175)
+    - When issue is referenced from another issue or pull request, it is not
+      visible in its API response, therefore not rendered by us (git-bug#175)
     - Code review comments attached to individual lines of code are not
-          exported (git-bug#57)
+      exported (git-bug#57)
 - GitHubReader content improvements
     - Inline emojis (git-bug#175)
     - Emoji reactions
@@ -16,19 +16,13 @@
     - Attachment links
 - Internal hyperlinks in Renderer (with other Pelican pages)
 - Multi-prefix common index for issues (based on date?)
-- README for the project
-    - Design docs
-    - Configuration parameters
-        - Extension
-            - List all variables, specify: is required; default value
-            - Test default values
-        - Theme
-- Explain licensing: Pelican is a dependency, Matomo is inspiration
-- Bump versions before publishing (fetcher format, Python package, user
-      agent)
-- Render documentation with MkDocs
-- Create demo web site
-    - Ask for permission to use the dataset
+- Write documentation
+    - Theme
+    - Quickstart
+    - Changelog
+    - Makefiles (?)
+- Render demo along with the main website
+- Bump versions before publishing (fetcher format, Python package, user agent)
 - Test on a large dataset
 - Profile memory and CPU usage
 
