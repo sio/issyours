@@ -1,4 +1,13 @@
 #
+# Reading environment variables
+#
+import os
+demo_repo = os.environ['DEMO_REPO']
+demo_data = os.environ['DEMO_STORAGE']
+demo_theme = os.environ['DEMO_THEME']
+
+
+#
 # Pelican configuration
 #
 
@@ -11,7 +20,7 @@ DEFAULT_PAGINATION = 36
 LOCALE = 'en_US.UTF-8'
 DEFAULT_LANG = 'en'
 
-THEME = '../pelican-alchemy/alchemy'
+THEME = demo_theme
 BOOTSTRAP_CSS = 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/yeti/bootstrap.min.css'
 THEME_TEMPLATES_OVERRIDES = ['issyours_themes/alchemy']
 THEME_CSS_OVERRIDES = ['theme/css/override.css']
@@ -27,21 +36,6 @@ TEMPLATE_PAGES = {
 
 from issyours_github import GitHubReader
 
-
-#ISSYOURS_ISSUE_URL = 'issue/{slug}/'
-#ISSYOURS_ISSUE_SAVE_AS = 'issue/{slug}/index.html'
-#ISSYOURS_INDEX_URL = 'issues/'
-#ISSYOURS_INDEX_SAVE_AS = 'issues/index.html'
 ISSYOURS_SOURCES = {
-    GitHubReader(repo='MichaelMure/git-bug', directory=r'../../_issyours_archives/git-bug'): {
-        'prefix': 'GH',
-    },
-}
-ISSYOURS_REWRITE_URLS = {
-    None: {  # Global rewrite rules
-    },
-    'GH': {  # For this prefix only
-        r'http[s]?://github.com/golang/([^>]+)': r'golang/\1',
-        r'http[s]?://git-scm.com/([^>]+)': r'git://\1',
-    },
+    GitHubReader(repo=demo_repo, directory=demo_data): {},
 }
