@@ -17,7 +17,6 @@
 - [ ] Internal hyperlinks in Renderer (with other Pelican pages)
 - [ ] Multi-prefix common index for issues (based on date?)
 - [ ] README for the project
-    - [ ] Skeleton README
     - [ ] Design docs
     - [ ] Configuration parameters
         - [ ] Extension
@@ -27,6 +26,7 @@
 - [ ] Explain licensing: Pelican is a dependency, Matomo is inspiration
 - [ ] Bump versions before publishing (fetcher format, Python package, user
       agent)
+- [ ] Render documentation with MkDocs
 - [ ] Create demo web site
     - [ ] Ask for permission to use the dataset
 - [ ] Test on a large dataset
