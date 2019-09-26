@@ -23,7 +23,7 @@ before_script:
 
 pages:
   script:
-    - apk add rsync make
+    - apk add rsync make git
     - mkdir mkdocs_source
     - rsync
         -Rr . mkdocs_source
