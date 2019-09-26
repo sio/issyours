@@ -1,36 +1,36 @@
 # TODO list for Issyours
 
-- [ ] GitHubFetcher improvements
-    - [ ] When issue is referenced from another issue or pull request, it is
+- GitHubFetcher improvements
+    - When issue is referenced from another issue or pull request, it is
           not visible in its API response, therefore not rendered by us (git-bug#175)
-    - [ ] Code review comments attached to individual lines of code are not
+    - Code review comments attached to individual lines of code are not
           exported (git-bug#57)
-- [ ] GitHubReader content improvements
-    - [ ] Inline emojis (git-bug#175)
-    - [ ] Emoji reactions
-    - [ ] GFM todo lists (git-bug#175)
-    - [ ] GFM strikethrough (git-bug#71)
-- [ ] Internal hyperlinks and mentions in GitHubReader
-    - [ ] Issues and pull requests
-    - [ ] User mentions
-    - [ ] Attachment links
-- [ ] Internal hyperlinks in Renderer (with other Pelican pages)
-- [ ] Multi-prefix common index for issues (based on date?)
-- [ ] README for the project
-    - [ ] Design docs
-    - [ ] Configuration parameters
-        - [ ] Extension
-            - [ ] List all variables, specify: is required; default value
-            - [ ] Test default values
-        - [ ] Theme
-- [ ] Explain licensing: Pelican is a dependency, Matomo is inspiration
-- [ ] Bump versions before publishing (fetcher format, Python package, user
+- GitHubReader content improvements
+    - Inline emojis (git-bug#175)
+    - Emoji reactions
+    - GFM todo lists (git-bug#175)
+    - GFM strikethrough (git-bug#71)
+- Internal hyperlinks and mentions in GitHubReader
+    - Issues and pull requests
+    - User mentions
+    - Attachment links
+- Internal hyperlinks in Renderer (with other Pelican pages)
+- Multi-prefix common index for issues (based on date?)
+- README for the project
+    - Design docs
+    - Configuration parameters
+        - Extension
+            - List all variables, specify: is required; default value
+            - Test default values
+        - Theme
+- Explain licensing: Pelican is a dependency, Matomo is inspiration
+- Bump versions before publishing (fetcher format, Python package, user
       agent)
-- [ ] Render documentation with MkDocs
-- [ ] Create demo web site
-    - [ ] Ask for permission to use the dataset
-- [ ] Test on a large dataset
-- [ ] Profile memory and CPU usage
+- Render documentation with MkDocs
+- Create demo web site
+    - Ask for permission to use the dataset
+- Test on a large dataset
+- Profile memory and CPU usage
 
 > References in parentheses contain repo and issue number where the feature is
 > in use. MichaelMure/git-bug is used as default test dataset
