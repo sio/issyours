@@ -27,8 +27,8 @@ Example:
 
 ```python
 ISSYOURS_SOURCES = {
-    GitHubReader(repo='owner/project', directory=r'/path/to/local/backup'): {
-        'prefix': 'GH',
+    GitHubReader(repo='owner/project', directory=r'/path/to/issue/backup'): {
+        'prefix': 'GH',  # Optional, may be omitted
     },
 }
 ```
