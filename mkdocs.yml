@@ -1,4 +1,4 @@
-#site_url: https://issyours.ml
+site_url: https://issyours.ml
 site_name: Issyours
 site_description: Read-only archive for any issue tracker
 site_author: Vitaly Potyarkin
@@ -30,9 +30,9 @@ theme:
     primary: cyan
     accent: cyan
 
-#google_analytics:
-#  - UA-121532727-3
-#  - issyours.ml
+google_analytics:
+  - UA-121532727-4
+  - issyours.ml
 
 markdown_extensions:
   - codehilite:
