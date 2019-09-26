@@ -1,0 +1,40 @@
+#site_url: https://issyours.ml
+site_name: issyours
+site_description: Read-only archive for any issue tracker
+site_author: Vitaly Potyarkin
+site_dir: public
+
+repo_url: https://github.com/sio/issyours
+repo_name: sio / issyours
+edit_uri: ''
+
+nav:
+  - Quickstart:
+    - Demo: docs/demo.md
+    - Getting started: docs/quickstart.md
+  - Documentation:
+    - Configuration: docs/configuring.md
+    - GitHub data source: docs/github.md
+    - Themes: docs/themes.md
+  - Misc:
+    - Initial design: docs/design.md
+    - Distributed issue tracking: docs/distributed.md
+  - Changelog: docs/changelog.md
+  - Copyright: docs/copying.md
+
+docs_dir: mkdocs_source
+theme:
+  name: material
+  palette:
+    primary: cyan
+    accent: cyan
+
+#google_analytics:
+#  - UA-121532727-3
+#  - issyours.ml
+
+markdown_extensions:
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: '#'

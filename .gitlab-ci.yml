@@ -1,0 +1,27 @@
+image: python:3.5-alpine
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
+
+cache:
+  paths:
+    - pip-cache
+    - venv
+
+before_script:
+  - python --version
+  - python -m venv venv
+  - source venv/bin/activate
+
+pages:
+  script:
+    - apk add rsync
+    - mkdir mkdocs_source
+    - rsync -Rr . mkdocs_source
+    - pip install mkdocs mkdocs-material pygments
+    - mkdocs build
+  artifacts:
+    paths:
+      - public/
+  only:
+    - website
