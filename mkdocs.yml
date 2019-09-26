@@ -29,6 +29,8 @@ theme:
   palette:
     primary: cyan
     accent: cyan
+  static_templates:
+    - 404.html
 
 google_analytics:
   - UA-121532727-4
