@@ -2,11 +2,19 @@ image: python:3.5-alpine
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
+  DEMO_OUTPUT: "$CI_PROJECT_DIR/public/demo"
+  DEMO_STORAGE: "$CI_PROJECT_DIR/demo-data"
+  DEMO_THEME: "$CI_PROJECT_DIR/pelican-alchemy/alchemy"
+  VENVDIR: "$CI_PROJECT_DIR/venv"
+  ISSYOURS_DEBUG: 1
+  # ISSYOURS_GITHUB_TOKEN: set via GitLab CI web interface
 
 cache:
   paths:
     - pip-cache
     - venv
+    - demo-data
+    - pelican-alchemy
 
 before_script:
   - python --version
@@ -15,7 +23,7 @@ before_script:
 
 pages:
   script:
-    - apk add rsync
+    - apk add rsync make
     - mkdir mkdocs_source
     - rsync
         -Rr . mkdocs_source
@@ -26,6 +34,8 @@ pages:
         mkdocs-material
         pygments
     - mkdocs build
+    - git clone --depth 1 "https://github.com/nairobilug/pelican-alchemy.git" || true
+    - make demo
   artifacts:
     paths:
       - public/
