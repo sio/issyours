@@ -39,6 +39,12 @@ pip install "https://github.com/sio/issyours/tarball/master"
 That provides you with Python packages for `issyours` and `issyours_github`
 and a command line application `issyours-github`.
 
+To fetch default theme along with the main package use:
+
+```
+pip install "https://github.com/sio/issyours/tarball/master[with-default-theme]"
+```
+
 
 ## Usage
 

@@ -28,6 +28,11 @@ setup(
         'pelican',
         'markdown',
     ],
+    extras_require={
+        'with-default-theme': [
+            'alchemy @ https://github.com/nairobilug/pelican-alchemy/tarball/master',
+        ],
+    },
     python_requires='>=3.3',
     zip_safe=True,
 )
