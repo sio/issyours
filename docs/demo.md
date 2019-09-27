@@ -1,14 +1,17 @@
 # Issyours demonstration
 
+Prerendered demo website is available [here](https://issyours.ml/demo/issues).
+Follow this article to build the same content on your machine.
+
+
+## Building demo web site
+
 Makefiles bundled with Issyours source code allow you to generate a working
 demo website very quickly. Use this to get a first look at Issyours or as a
 supplement to documentation when configuring your own setup.
 
 Your system will not be modified at all. Building steps are executed in
 virtual environment and all generated artifacts can be discarded with `make clean`
-
-
-## Building demo web site
 
 Clone/download this repo:
 
