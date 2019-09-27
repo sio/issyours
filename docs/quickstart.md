@@ -91,7 +91,8 @@ Run Pelican to generate the contents of your website
 $ pelican . -o output -s pelicanconf.py
 ```
 
-Check that everything works with a local development web server
+Check that everything works with a local development web server:
+<http://localhost:8000/issues>:
 
 ```
 $ pelican --listen
