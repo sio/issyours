@@ -3,7 +3,6 @@ image: python:3.5-alpine
 variables:
   DEMO_OUTPUT: "$CI_PROJECT_DIR/public/demo"
   DEMO_STORAGE: "$CI_PROJECT_DIR/demo-data"
-  DEMO_THEME: "$CI_PROJECT_DIR/pelican-alchemy/alchemy"
   ISSYOURS_DEBUG: 1
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
   VENVDIR: "$CI_PROJECT_DIR/venv"
@@ -12,7 +11,6 @@ variables:
 cache:
   paths:
     - demo-data
-    - pelican-alchemy
     - pip-cache
     - venv
 
@@ -24,14 +22,12 @@ before_script:
 pages:
   script:
     - apk add
-        git
         make
         rsync
     - mkdir mkdocs_source
     - rsync
         -Rr . mkdocs_source
         --exclude demo-data
-        --exclude pelican-alchemy
         --exclude pip-cache
         --exclude venv
     - pip install
@@ -39,11 +35,7 @@ pages:
         mkdocs-material
         pygments
     - mkdocs build
-    - git clone --depth 1 "https://github.com/nairobilug/pelican-alchemy.git"
-      || (
-        git -C "$DEMO_THEME" fetch --depth 1 &&
-        git -C "$DEMO_THEME" reset --hard origin/master
-      )
+    - pip install --upgrade "https://github.com/sio/pelican-alchemy/tarball/install"  # TODO: nairobilug
     - make demo
   artifacts:
     paths:

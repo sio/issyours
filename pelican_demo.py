@@ -4,7 +4,6 @@
 import os
 demo_repo = os.environ['DEMO_REPO']
 demo_data = os.environ['DEMO_STORAGE']
-demo_theme = os.environ['DEMO_THEME']
 
 
 #
@@ -20,7 +19,8 @@ DEFAULT_PAGINATION = 36
 LOCALE = 'en_US.UTF-8'
 DEFAULT_LANG = 'en'
 
-THEME = demo_theme
+import alchemy
+THEME = alchemy.path()
 BOOTSTRAP_CSS = 'https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/yeti/bootstrap.min.css'
 THEME_TEMPLATES_OVERRIDES = ['issyours_themes/alchemy']
 THEME_CSS_OVERRIDES = ['theme/css/override.css']

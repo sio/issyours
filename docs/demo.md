@@ -10,12 +10,10 @@ virtual environment and all generated artifacts can be discarded with `make clea
 
 ## Building demo web site
 
-Clone/download this repo and the reference theme:
+Clone/download this repo:
 
 ```
 $ git clone "https://github.com/sio/issyours.git"
-$ git clone "https://github.com/nairobilug/pelican-alchemy.git"
-TODO: Upstream theme does not match reference build
 ```
 
 Check that Python is available via `python3` command: `python3 --version`.
@@ -56,5 +54,3 @@ Use these environment variables to alter the behavior of demo build:
   the repo to mirror issues and pull requests from
 - `DEMO_STORAGE` *(default: demo-github-data)* -
   directory to save data from GitHub
-- `DEMO_THEME` *(default: ../pelican-alchemy/alchemy)* -
-  path to Pelican theme
