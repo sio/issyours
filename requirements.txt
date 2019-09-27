@@ -1,2 +1,2 @@
 # Theme used for rendering demo
-https://github.com/sio/pelican-alchemy/tarball/install
+https://github.com/sio/pelican-alchemy/tarball/mine

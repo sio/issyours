@@ -35,7 +35,7 @@ pages:
         mkdocs-material
         pygments
     - mkdocs build
-    - pip install --upgrade "https://github.com/sio/pelican-alchemy/tarball/install"  # TODO: nairobilug
+    - pip install --upgrade "https://github.com/sio/pelican-alchemy/tarball/mine"  # TODO: nairobilug
     - make demo
   artifacts:
     paths:
