@@ -28,6 +28,18 @@ The core components of Issyours work as layers:
 - *Renderer* creates a static web site for viewing issues available via
   *Reader*
 
+Feature highlights:
+
+- Backup utility for GitHub issues (requires oAuth token)
+- Pelican plugin for rendering issues on a static web site
+    - Highly customizable destination paths and URLs
+    - Multiple data sources (with different prefixes)
+    - Customizable URL rewrite rules for links in issues/comments (regular
+      expressions)
+- Python library for adding support of other issue trackers
+- A functional, clean and responsive default theme based on Bootstrap 4
+
+
 ## Installation
 
 Issyours can be installed with pip:
@@ -70,6 +82,9 @@ ISSYOURS_SOURCES = {
 
 After configuring Pelican and Issyours run `pelican $BLOG_CONTENT -o
 $SITE_OUTPUT -s $CONFIG_FILE` to generate HTML pages for the static website.
+
+These steps are explained with more details in
+[documentation](docs/quickstart.md)
 
 [Pelican documentation]: http://docs.getpelican.com/en/stable/
 [sample]: pelican_demo.py
