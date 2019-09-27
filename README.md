@@ -14,7 +14,7 @@ You should test that new version works for you if updating.
 This project aims to enable developers to own the data they submit to an issue
 tracker. Issyours offers more than just a data dump for backup purposes, it
 creates fully browsable issues archive ready to be deployed as a static web
-site.
+site (see [demo](https://issyours.ml/demo/issues)).
 
 Issyours currently supports exporting GitHub Issues and Pull Requests and
 rendering them with Pelican static site generator. More data sources are to be
