@@ -14,28 +14,10 @@ cache:
     - pip-cache
     - venv
 
-before_script:
-  - python --version
-  - python -m venv venv
-  - source venv/bin/activate
-
 pages:
   script:
-    - apk add
-        make
-        rsync
-    - mkdir mkdocs_source
-    - rsync
-        -Rr . mkdocs_source
-        --exclude demo-data
-        --exclude pip-cache
-        --exclude venv
-    - pip install
-        mkdocs
-        mkdocs-material
-        pygments
-    - mkdocs build
-    - pip install --upgrade "https://github.com/nairobilug/pelican-alchemy/tarball/master"
+    - apk add make
+    - make docs
     - make demo
   artifacts:
     paths:

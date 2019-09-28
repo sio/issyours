@@ -1,7 +1,7 @@
 # Getting started with Issyours
 
 Check [demo website](https://issyours.ml/demo/issues) and [demo
-tutorial](demo.md) for a quick look at Issyours.
+tutorial](demonstration.md) for a quick look at Issyours.
 
 Using Issyours requires some understanding of how Pelican works. Refer to
 [Pelican documentation](http://docs.getpelican.com/en/stable/quickstart.html)

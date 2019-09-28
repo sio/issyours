@@ -8,5 +8,7 @@ venv
 venv.bat
 
 demo-*
+public/
+docs/index.md
 *.dat
 secret*

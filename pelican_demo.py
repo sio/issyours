@@ -14,6 +14,7 @@ demo_data = os.environ['DEMO_STORAGE']
 import issyours.pelican
 PLUGINS = [issyours.pelican]
 
+SITENAME = 'Issyours Demo'
 RELATIVE_URLS = True
 DEFAULT_PAGINATION = 36
 LOCALE = 'en_US.UTF-8'

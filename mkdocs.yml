@@ -9,21 +9,21 @@ repo_name: sio / issyours
 edit_uri: ''
 
 nav:
-  - Overview: README.md
+  - Overview: index.md
   - Quickstart:
-    - Demo: docs/demo.md
-    - Getting started: docs/quickstart.md
+    - Demo: demonstration.md
+    - Getting started: quickstart.md
   - Documentation:
-    - Configuration: docs/configuring.md
-    - GitHub data source: docs/github.md
-    - Themes: docs/themes.md
+    - Configuration: configuring.md
+    - GitHub data source: github.md
+    - Themes: themes.md
   - Misc:
-    - Initial design: docs/design.md
-    - Distributed issue tracking: docs/distributed.md
-  - Changelog: docs/changelog.md
-  - Copyright: docs/copying.md
+    - Initial design: design.md
+    - Distributed issue tracking: distributed.md
+  - Changelog: changelog.md
+  - Copyright: copying.md
 
-docs_dir: mkdocs_source
+docs_dir: docs
 theme:
   name: material
   palette:

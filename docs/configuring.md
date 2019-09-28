@@ -12,7 +12,7 @@ across all Issyours components.
 
 Issyours provides a plugin for Pelican static site generator. All
 configuration is done in the Pelican settings file (e.g. `pelicanconf.py`).
-See [sample](../pelican_demo.py).
+See [sample](pelican_demo.py).
 
 
 ### Data sources (required)
