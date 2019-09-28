@@ -3,6 +3,7 @@ image: python:3.5-alpine
 variables:
   DEMO_OUTPUT: "$CI_PROJECT_DIR/public/demo"
   DEMO_STORAGE: "$CI_PROJECT_DIR/demo-data"
+  DOCS_OUTPUT: "$CI_PROJECT_DIR/public"
   ISSYOURS_DEBUG: 1
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
   VENVDIR: "$CI_PROJECT_DIR/venv"
