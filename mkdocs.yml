@@ -26,6 +26,9 @@ nav:
 docs_dir: docs
 theme:
   name: material
+  font:
+    text: Glegoo  # see also: Nobile
+    code: Fira Mono
   palette:
     primary: cyan
     accent: cyan
