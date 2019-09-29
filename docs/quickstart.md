@@ -75,7 +75,7 @@ TEMPLATE_PAGES = {'override.css.html': 'theme/css/override.css'}
 
 from issyours_github import GitHubReader
 ISSYOURS_SOURCES = {
-    GitHubReader(repo='sio/HomeLibraryCatalog', directory='issue-backup'): {},
+    GitHubReader(repo='username/reponame', directory='/path/to/local-issue-backup'): {},
 }
 ```
 
