@@ -19,6 +19,9 @@ Copyright 2019 Vitaly Potyarkin
 
 - Issyours depends on [Pelican](https://getpelican.com) static site generator
   (open source under AGPLv3)
+- Default theme for Issyours is
+  [Alchemy](https://github.com/nairobilug/pelican-alchemy) (MIT) provided by
+  [Nairobi LUG](https://nairobilug.or.ke)
 - Some web design tricks were borrowed from Matomo's [GitHub Issues
   Mirror](https://github.com/matomo-org/github-issues-mirror) (GPLv3+)
 
