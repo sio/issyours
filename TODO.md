@@ -7,7 +7,7 @@
       exported (git-bug#57)
 - GitHubReader content improvements
     - Inline emojis (git-bug#175)
-    - Emoji reactions
+    - Emoji reactions (add to HTML body)
     - GFM todo lists (git-bug#175)
     - GFM strikethrough (git-bug#71)
 - Internal hyperlinks and mentions in GitHubReader
@@ -16,12 +16,6 @@
     - Attachment links
 - Internal hyperlinks in Renderer (with other Pelican pages)
 - Multi-prefix common index for issues (based on date?)
-- Write documentation
-    - Theme
-    - Quickstart
-    - Changelog
-    - Makefiles (?)
-- Render demo along with the main website
 - Test on a large dataset
 - Profile memory and CPU usage
 
