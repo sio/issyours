@@ -73,7 +73,7 @@ class GitHubAPICaller:
     '''
 
     API_ROOT = 'https://api.github.com'
-    USER_AGENT = 'Issue backup fetcher v0.0.1 <https://github.com/sio/issyours/>'
+    USER_AGENT = 'Issue backup fetcher v0.7.0 <https://github.com/sio/issyours/>'
 
 
     def __init__(self, token):

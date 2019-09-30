@@ -24,7 +24,7 @@ class GitHubFetcher(GitHubFileStorage):
     '''
 
     ABOUT = 'GitHub Issues Archive made with <https://github.com/sio/issyours>'
-    STAMP_VERSION = 1
+    STAMP_VERSION = 2
 
 
     def __init__(self, repo, directory, token):

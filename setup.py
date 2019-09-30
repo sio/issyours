@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='issyours',
-    version='0.0.1-git',
+    version='0.7.0',
     description='Read-only archive for any issue tracker',
     url='https://github.com/sio/issyours',
     author='Vitaly Potyarkin',

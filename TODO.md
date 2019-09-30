@@ -22,7 +22,6 @@
     - Changelog
     - Makefiles (?)
 - Render demo along with the main website
-- Bump versions before publishing (fetcher format, Python package, user agent)
 - Test on a large dataset
 - Profile memory and CPU usage
 
