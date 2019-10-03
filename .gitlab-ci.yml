@@ -9,7 +9,7 @@ variables:
   VENVDIR: "$CI_PROJECT_DIR/venv"
   # ISSYOURS_GITHUB_TOKEN: set via GitLab CI web interface
 
-cache:
+cache: &global_cache
   paths:
     - demo-data
     - pip-cache
@@ -22,6 +22,9 @@ before_script:
 test:
   script:
     - make test
+  cache:
+    <<: *global_cache
+    policy: pull
 
 pages:
   script:
