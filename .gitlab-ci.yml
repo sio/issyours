@@ -16,9 +16,15 @@ cache:
     - venv
   key: "$CI_COMMIT_REF_SLUG-2"  # increment suffix to drop cache
 
+before_script:
+  - apk add make
+
+test:
+  script:
+    - make test
+
 pages:
   script:
-    - apk add make
     - make docs
     - make demo
   artifacts:
