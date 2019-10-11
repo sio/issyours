@@ -259,11 +259,18 @@ def make_filename(url, filepath):
     return parsed.path.split('/')[-1]
 
 
+import pymdownx.emoji
 MARKDOWN_CONFIG={
     'extensions': [
-        'markdown.extensions.fenced_code',
         'markdown.extensions.codehilite',
+        'markdown.extensions.fenced_code',
         'markdown.extensions.nl2br',
+        'markdown.extensions.sane_lists',
+        'markdown.extensions.tables',
+        'pymdownx.emoji',
+        'pymdownx.magiclink',
+        'pymdownx.tasklist',
+        'pymdownx.tilde',
     ],
     'extension_configs': {
         'markdown.extensions.codehilite': {
@@ -272,6 +279,12 @@ MARKDOWN_CONFIG={
         },
         'markdown.extensions.extra': {},
         'markdown.extensions.meta': {},
+        'pymdownx.emoji': {
+            'emoji_index': pymdownx.emoji.gemoji,
+        },
+        'pymdownx.tilde': {
+            'subscript': False,
+        },
     },
     'output_format': 'html5',
 }

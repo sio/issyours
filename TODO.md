@@ -6,10 +6,7 @@
     - Code review comments attached to individual lines of code are not
       exported (git-bug#57)
 - GitHubReader content improvements
-    - Inline emojis (git-bug#175)
     - Emoji reactions (add to HTML body)
-    - GFM todo lists (git-bug#175)
-    - GFM strikethrough (git-bug#71)
 - Internal hyperlinks and mentions in GitHubReader
     - Issues and pull requests
     - User mentions
