@@ -1,4 +1,4 @@
-DEMO_REPO?=sio/bash-complete-partial-path
+DEMO_REPO?=sio/LibPQ
 DEMO_STORAGE?=$(WORKDIR)/demo-github-data
 export DEMO_REPO
 export DEMO_STORAGE

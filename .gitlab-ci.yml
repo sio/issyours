@@ -14,7 +14,7 @@ cache: &global_cache
     - demo-data
     - pip-cache
     - venv
-  key: shared-cache-3  # increment suffix to drop cache
+  key: shared-cache-4  # increment suffix to drop cache
 
 before_script:
   - apk add make
