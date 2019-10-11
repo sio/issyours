@@ -7,6 +7,7 @@
       exported (git-bug#57)
 - GitHubReader content improvements
     - Emoji reactions (add to HTML body)
+    - Multi-level todo lists (LibPQ#17)
 - Internal hyperlinks and mentions in GitHubReader
     - Issues and pull requests
     - User mentions
