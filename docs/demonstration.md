@@ -53,7 +53,7 @@ $ make serve
 
 Use these environment variables to alter the behavior of demo build:
 
-- `DEMO_REPO` *(default: sio/bash-complete-partial-path)* -
+- `DEMO_REPO` *(default: [sio/LibPQ](https://github.com/sio/LibPQ))* -
   the repo to mirror issues and pull requests from
 - `DEMO_STORAGE` *(default: demo-github-data)* -
   directory to save data from GitHub
