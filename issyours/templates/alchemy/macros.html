@@ -1,108 +1,108 @@
 {% macro avatar(person) %}
-    {% if person.picture %}
-    <img class="avatar rounded img-fluid" src="{{ SITEURL + '/' + avatar_url(person) }}"/>
-    {% endif %}
+  {% if person.picture %}
+  <img class="avatar rounded img-fluid" src="{{ SITEURL + '/' + avatar_url(person) }}"/>
+  {% endif %}
 {% endmacro %}
 
 {% macro show_user(person) %}
-    <span class="user">
-        <strong>{{ person.nickname }}</strong>
-        <div class="popover bs-popover-bottom">
-            <h3 class="popover-header">
-                <a href="{{ person.original_url }}" target="_blank">{{ person.fullname or person.nickname }}</a>
-            </h3>
-            <div class="popover-body">
-                {{ avatar(person) }}
-            </div>
-        </div>
-    </span>
+  <span class="user">
+    <strong>{{ person.nickname }}</strong>
+    <div class="popover bs-popover-bottom">
+      <h3 class="popover-header">
+        <a href="{{ person.original_url }}" target="_blank">{{ person.fullname or person.nickname }}</a>
+      </h3>
+      <div class="popover-body">
+        {{ avatar(person) }}
+      </div>
+    </div>
+  </span>
 {% endmacro %}
 
 {% macro show_date(dtime) %}
-    <abbr title="{{ dtime.isoformat() }}">{{ local_date(dtime) }}</abbr>
+  <abbr title="{{ dtime.isoformat() }}">{{ local_date(dtime) }}</abbr>
 {% endmacro %}
 
 {% macro show_card(issue, comment) %}
-    {% set data = comment or issue %}
-    <div class="{{ type }} card mb-3">
-        <div class="card-header text-secondary">
-            {{ avatar(data.author) }}
-            {{ show_user(data.author) }}
-            {{ 'commented on' if comment else 'submitted on' }}
-            {{ show_date(data.created_at) }}
-            <span class="badge px-0 mt-1 float-right font-weight-light">
-            <a class="float-right text-secondary" href="#{{ data.created_at.timestamp() }}" name="{{ data.created_at.timestamp() }}">#</a>
-            </span>
-            {% if data.author_role %}
-            <span class="badge mt-1 float-right font-weight-normal">{{ data.author_role }}</span>
-            {% endif %}
-        </div>
-        <div class="card-body">{{ data.body }}</div>
-        {% if data.attachments()|first %}
-        <div class="card-footer text-secondary small">
-            Attachments:
-            {% for attach in data.attachments() %}
-                <a href="{{ SITEURL + '/' + attachment_url(attach, issue) }}" target="_blank">{{ attach.name }}</a>
-            {% endfor %}
-        </div>
-        {% endif %}
+  {% set data = comment or issue %}
+  <div class="{{ type }} card mb-3">
+    <div class="card-header text-secondary">
+      {{ avatar(data.author) }}
+      {{ show_user(data.author) }}
+      {{ 'commented on' if comment else 'submitted on' }}
+      {{ show_date(data.created_at) }}
+      <span class="badge px-0 mt-1 float-right font-weight-light">
+      <a class="float-right text-secondary" href="#{{ data.created_at.timestamp() }}" name="{{ data.created_at.timestamp() }}">#</a>
+      </span>
+      {% if data.author_role %}
+      <span class="badge mt-1 float-right font-weight-normal">{{ data.author_role }}</span>
+      {% endif %}
     </div>
+    <div class="card-body">{{ data.body }}</div>
+    {% if data.attachments()|first %}
+    <div class="card-footer text-secondary small">
+      Attachments:
+      {% for attach in data.attachments() %}
+        <a href="{{ SITEURL + '/' + attachment_url(attach, issue) }}" target="_blank">{{ attach.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
 {% endmacro %}
 
 {% macro show_label(label) %}
-    <span class="badge text-{{ 'white' if label.is_dark else 'black' }}" style="background: {{ label.color }}">{{ label.name }}</span>
+  <span class="badge text-{{ 'white' if label.is_dark else 'black' }}" style="background: {{ label.color }}">{{ label.name }}</span>
 {% endmacro %}
 
 {% macro show_commit(hash) %}
-    <strong title="{{ hash }}">{{ hash|truncate(7, True, '') }}</strong>
+  <strong title="{{ hash }}">{{ hash|truncate(7, True, '') }}</strong>
 {% endmacro %}
 
 {% macro mention_commit(hash, prefix, suffix) %}
-    {% if hash %}
-    {{ prefix or 'in commit' }}{{ show_commit(hash) }}{{ suffix or '' }}
-    {% endif %}
+  {% if hash %}
+  {{ prefix or 'in commit' }}{{ show_commit(hash) }}{{ suffix or '' }}
+  {% endif %}
 {% endmacro %}
 
 {% macro show_event(event) %}
-    <div class="alert text-secondary">
-        {{ show_user(event.author) }}
-        {% if event.type == 'assigned' %}
-            assigned this issue to
-            {% for assignee in event.data['assignees'] %}
-            {{ show_user(assignee) }}
-            {% endfor %}
-        {% elif event.type in ('milestoned', 'demilestoned') %}
-            {{ 'added' if event.type == 'milestoned' else 'removed' }}
-            this issue
-            {{ 'to' if event.type == 'milestoned' else 'from' }}
-            milestone <strong>{{ event.data['milestone']['title'] }}</strong>
-        {% elif event.type in ('labeled', 'unlabeled') %}
-            {{ event.type }}
-            {% for label in event.data['labels'] %}
-            {{ show_label(label) }}
-            {% endfor %}
-        {% elif event.type == 'merged' %}
-            merged proposed changes {{ mention_commit(event.data.get('commit_id')) }}
-        {% elif event.type == 'referenced' %}
-            referenced this issue {{ mention_commit(event.data.get('commit_id')) }}
-        {% elif event.type == 'renamed' %}
-            changed title from
-            <strong>{{event.data['rename']['from']}}</strong>
-            to
-            <strong>{{event.data['rename']['to']}}</strong>
-        {% elif event.type == 'head_ref_force_pushed' %}
-            force pushed to this branch {{ mention_commit(event.data.get('commit_id')) }}
-        {% elif event.type == 'reopened' %}
-            reopened this issue
-        {% elif event.type == 'review_requested' %}
-            requested review
-        {% elif event.type == 'ready_for_review' %}
-            marked this issue as ready for review
-        {% elif event.type == 'closed' %}
-            closed this issue {{ mention_commit(event.data.get('commit_id')) }}
-        {% else %}
-            {{ event.type }} {{ event.data }}
-        {% endif %}
-        on {{ show_date(event.created_at) }}
-    </div>
+  <div class="alert text-secondary">
+    {{ show_user(event.author) }}
+    {% if event.type == 'assigned' %}
+      assigned this issue to
+      {% for assignee in event.data['assignees'] %}
+      {{ show_user(assignee) }}
+      {% endfor %}
+    {% elif event.type in ('milestoned', 'demilestoned') %}
+      {{ 'added' if event.type == 'milestoned' else 'removed' }}
+      this issue
+      {{ 'to' if event.type == 'milestoned' else 'from' }}
+      milestone <strong>{{ event.data['milestone']['title'] }}</strong>
+    {% elif event.type in ('labeled', 'unlabeled') %}
+      {{ event.type }}
+      {% for label in event.data['labels'] %}
+      {{ show_label(label) }}
+      {% endfor %}
+    {% elif event.type == 'merged' %}
+      merged proposed changes {{ mention_commit(event.data.get('commit_id')) }}
+    {% elif event.type == 'referenced' %}
+      referenced this issue {{ mention_commit(event.data.get('commit_id')) }}
+    {% elif event.type == 'renamed' %}
+      changed title from
+      <strong>{{event.data['rename']['from']}}</strong>
+      to
+      <strong>{{event.data['rename']['to']}}</strong>
+    {% elif event.type == 'head_ref_force_pushed' %}
+      force pushed to this branch {{ mention_commit(event.data.get('commit_id')) }}
+    {% elif event.type == 'reopened' %}
+      reopened this issue
+    {% elif event.type == 'review_requested' %}
+      requested review
+    {% elif event.type == 'ready_for_review' %}
+      marked this issue as ready for review
+    {% elif event.type == 'closed' %}
+      closed this issue {{ mention_commit(event.data.get('commit_id')) }}
+    {% else %}
+      {{ event.type }} {{ event.data }}
+    {% endif %}
+    on {{ show_date(event.created_at) }}
+  </div>
 {% endmacro %}

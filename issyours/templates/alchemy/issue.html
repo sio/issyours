@@ -4,25 +4,25 @@
 {% block title %}{{ issue.title|striptags }} {{ super() }}{% endblock %}
 
 {% block page_header %}
-    {{ issue.title }}
-    <a href="{{ issue.original_url }}"><small>#{{ issue.slug }}</small></a>
+  {{ issue.title }}
+  <a href="{{ issue.original_url }}"><small>#{{ issue.slug }}</small></a>
 {% endblock %}
 
 {% block content %}
 <section class="badges lead mb-4">
-    <span class="badge text-uppercase badge-{{ 'danger' if issue.closed_at else 'success' }}">{{ issue.status }}</span>
-    {% for label in issue.labels %}
-        {{ show_label(label) }}
-    {% endfor %}
+  <span class="badge text-uppercase badge-{{ 'danger' if issue.closed_at else 'success' }}">{{ issue.status }}</span>
+  {% for label in issue.labels %}
+    {{ show_label(label) }}
+  {% endfor %}
 </section>
 <section id="content" class="body">
-    {{ show_card(issue) }}
-    {% for item, kind in issue.feed() %}
-        {% if kind == 'comment' %}
-            {{ show_card(issue, item) }}
-        {% else %}
-            {{ show_event(item) }}
-        {% endif %}
-    {% endfor %}
+  {{ show_card(issue) }}
+  {% for item, kind in issue.feed() %}
+    {% if kind == 'comment' %}
+      {{ show_card(issue, item) }}
+    {% else %}
+      {{ show_event(item) }}
+    {% endif %}
+  {% endfor %}
 </section>
 {% endblock %}

@@ -6,14 +6,14 @@
 
 {% block content %}
 <section id="content" class="body">
-    <h2>{{ issue.title }}</h2>
-    <div class="issue">
-        {{ issue.body }}
-    </div>
-    {% for comment in issue.comments() %}
-    <div class="issue-comment">
-        {{ comment.body }}
-    </div>
-    {% endfor %}
+  <h2>{{ issue.title }}</h2>
+  <div class="issue">
+    {{ issue.body }}
+  </div>
+  {% for comment in issue.comments() %}
+  <div class="issue-comment">
+    {{ comment.body }}
+  </div>
+  {% endfor %}
 </section>
 {% endblock %}
