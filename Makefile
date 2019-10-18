@@ -29,7 +29,7 @@ $(DEMO_STORAGE)/.ready: $(CONFIG)
 
 .PHONY: serve
 serve: venv
-	cd $(DEMO_OUTPUT) && $(VENV)/python -m http.server $(PORT)
+	cd $(DEMO_OUTPUT) && $(VENV)/python -m http.server $(PORT) --bind 127.0.0.1
 
 
 .PHONY: clean-demo
@@ -47,7 +47,7 @@ docs: venv
 
 .PHONY: serve-docs
 serve-docs: venv
-	cd $(DOCS_OUTPUT) && $(VENV)/python -m http.server $(PORT)
+	cd $(DOCS_OUTPUT) && $(VENV)/python -m http.server $(PORT) --bind 127.0.0.1
 
 
 .PHONY: clean-docs
