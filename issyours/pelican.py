@@ -31,7 +31,7 @@ class IssueGenerator(Generator):
             package = __name__.split('.')[0]
             code = resource_string(package, 'templates/{}.html'.format(name))
             if not code:
-                raise e
+                raise
             log.warning(
                 ('Theme provides no template for {!r}, '
                  'falling back to a very basic one').format(name)

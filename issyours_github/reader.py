@@ -6,13 +6,11 @@ Read GitHub issues from JSON files on local filesystem
 import json
 import logging
 import os
-import re
 from glob import glob
 from typing import Mapping
 from urllib.parse import urlparse
 
 from markdown import markdown
-from markdown.extensions import fenced_code, codehilite, nl2br
 
 from issyours.data import (
     Issue,
